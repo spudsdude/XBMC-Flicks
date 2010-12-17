@@ -744,12 +744,16 @@ def initApp():
 def getInstantQueue(displayWhat=None):
     initApp()
     getUserInstantQueue(netflixClient,user, displayWhat)
+    if(not user):
+        exit
     time.sleep(1)
     xbmcplugin.setContent(int(sys.argv[1]),'Movies')
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 def getRecommendedQueue():
     initApp()
+    if(not user):
+        exit
     getUserRecommendedQueue(netflixClient, user)
     time.sleep(1)
     xbmcplugin.setContent(int(sys.argv[1]),'Movies')
@@ -757,6 +761,8 @@ def getRecommendedQueue():
 
 def getNewToWatchInstant():
     initApp()
+    if(not user):
+        exit
     curUrl = "http://www.netflix.com/NewWatchInstantlyRSS"
     convertRSSFeed(getUrlString(curUrl), 500)
     time.sleep(1)
@@ -765,6 +771,8 @@ def getNewToWatchInstant():
 
 def getNewToWatchInstantTopX():
     initApp()
+    if(not user):
+        exit    
     curUrl = "http://www.netflix.com/NewWatchInstantlyRSS"
     convertRSSFeed(getUrlString(curUrl), 25)
     time.sleep(1)
@@ -775,6 +783,8 @@ def doSearch(strArg):
     #title search
     print "looking for instant view items that match %s" % strArg
     initApp()
+    if(not user):
+        exit    
     feeds = netflixClient.user.searchTitles(strArg,0,100)
     if(DEBUG):
         print simplejson.dumps(feeds,indent=4)
