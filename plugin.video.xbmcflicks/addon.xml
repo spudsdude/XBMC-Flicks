@@ -13,6 +13,6 @@
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
         <summary lang="en">XBMC Flicks</summary>
-        <description lang="en">Netflix for XBMC</description>
+        <description lang="en">Netflix for XBMC.. NOTE: You will need to modify the playercorefactory.xml and advanced settings.xml in order to use this addon for playback. Examples can be found with the plugin in the resources..reference_xml_files folder</description>
             </extension>
 </addon>
