@@ -9,6 +9,7 @@ import xbmc
 import webbrowser
 import os
 from settings import *
+from xinfo import *
 
 # parameter keys
 PARAMETER_KEY_MODE = "mode"
@@ -27,35 +28,6 @@ MY_USER = {
             'secret': ''
         }
 }
-
-class XInfo:
-    def __init__(self):
-        self.Mpaa = "n/a"
-        self.Position = "0"
-        self.Year = "0000"
-        self.Title = "Item Full Title Name"
-        self.TitleShort = "Short Item Title"
-        self.TitleShortLink = "Short Item Title with no spaces"
-        self.Rating = "0.0"
-        self.Runtime = "0"
-        self.Genres = ""
-        self.Directors = ""
-        self.ID = ""
-        self.FullId = ""
-        self.Poster = ""
-        self.Cast = ""
-        self.Synop = ""
-        self.TvShow = False
-        self.TvShowLink = ""
-        self.TvShowSeasonID = ""
-        self.TvShowSeriesID = ""
-        self.TvEpisode = False
-        self.TvEpisodeNetflixID = ""
-        self.TvEpisodeEpisodeNum = 0
-        self.TvEpisodeEpisodeSeasonNum = 0
-        self.IsInstantAvailable = False
-        self.MaturityLevel = "0"
-        self.AvailableUntil = "0"
 
 def __init__(self):
     self.data = []
@@ -440,7 +412,7 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
     #poster
     posterLoc = ""
     if(posterLoc == ""):
-        posterLoc = "http://cdn-8.nflximg.com/us/boxshots/" + POSTER_QUAL + "/" + curX.ID + ".jpg"
+        posterLoc = "http://cdn-" + str(get_CurMirrorNum()) + ".nflximg.com/us/boxshots/" + POSTER_QUAL + "/" + curX.ID + ".jpg"
     curX.Poster = posterLoc
     
     curX.TitleShortLink = curX.ID
@@ -673,6 +645,17 @@ def convertRSSFeed(tData, intLimit):
         #write the link file
         writeLinkFile(curX.ID, curX.Title)
 
+CUR_IMAGE_MIRROR_NUM = 0
+
+def get_CurMirrorNum():
+    global CUR_IMAGE_MIRROR_NUM
+    if(CUR_IMAGE_MIRROR_NUM == 8):
+        CUR_IMAGE_MIRROR_NUM
+        CUR_IMAGE_MIRROR_NUM = 1
+    else:
+        CUR_IMAGE_MIRROR_NUM = int(CUR_IMAGE_MIRROR_NUM) + 1
+    return CUR_IMAGE_MIRROR_NUM
+
 def initApp():
     global APP_NAME
     global API_KEY
@@ -695,7 +678,7 @@ def initApp():
     global MAX_RATING
     global SHOW_RATING_IN_TITLE
     global YEAR_LIMITER
-    
+    global CUR_IMAGE_MIRROR_NUM
     arg = int(sys.argv[1])
     APP_NAME = 'xbmcflix'
     API_KEY = 'gnexy7jajjtmspegrux7c3dj'
@@ -779,6 +762,14 @@ def getNewToWatchInstantTopX():
     xbmcplugin.setContent(int(sys.argv[1]),'Movies')
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
+def getTop25Feed(strArg):
+    initApp()
+    curUrl = "http://rss.netflix.com/Top25RSS?gid=" + str(strArg)
+    convertRSSFeed(getUrlString(curUrl), 25)
+    time.sleep(1)
+    xbmcplugin.setContent(int(sys.argv[1]),'Movies')
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
+    
 def doSearch(strArg):
     #title search
     print "looking for instant view items that match %s" % strArg

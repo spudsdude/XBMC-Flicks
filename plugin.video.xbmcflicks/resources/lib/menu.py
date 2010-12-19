@@ -24,6 +24,27 @@ MODE6i = 69
 MODE6j = 70
 MODE6k = 71
 MODE6l = 72
+MODE7 = 80
+MODE7a = 81
+MODE7b = 82
+MODE7c = 83
+MODE7d = 84
+MODE7e = 85
+MODE7f = 86
+MODE7g = 87
+MODE7h = 88
+MODE7i = 89
+MODE7j = 90
+MODE7k = 91
+MODE7l = 92
+MODE7m = 93
+MODE7n = 94
+MODE7o = 95
+MODE7p = 96
+MODE7q = 97
+MODE7r = 98
+MODE7s = 99
+MODE7t = 100
 
 # parameter keys
 PARAMETER_KEY_MODE = "mode"
@@ -49,7 +70,28 @@ SUBMENU6i = "Romance"
 SUBMENU6j = "Sci-Fi & Fantasy"
 SUBMENU6k = "Television"
 SUBMENU6l = "Thrillers"
-
+##Top 25 by Genre
+SUBMENU7 = "Top 10 By Genre"
+SUBMENU7a = "Action & Adventure"
+SUBMENU7b = "Anime & Animation"
+SUBMENU7c = "Blu-ray"
+SUBMENU7d = "Children & Family"
+SUBMENU7e = "Classics"
+SUBMENU7f = "Comedy"
+SUBMENU7g = "Documentary"
+SUBMENU7h = "Drama"
+SUBMENU7i = "Faith & Spirituality"
+SUBMENU7j = "Foreign"
+SUBMENU7k = "Gay & Lesbian"
+SUBMENU7l = "Horror"
+SUBMENU7m = "Independent"
+SUBMENU7n = "Music & Musicals"
+SUBMENU7o = "Romance"
+SUBMENU7p = "Sci-Fi & Fantasy"
+SUBMENU7q = "Special Interest"
+SUBMENU7r = "Sports & Fitness"
+SUBMENU7s = "Television"
+SUBMENU7t = "Thrillers"
 
 # plugin handle
 handle = int(sys.argv[1])
@@ -132,6 +174,32 @@ MODE6k }, isFolder=True)
 MODE6l }, isFolder=True)
    xbmcplugin.endOfDirectory(handle=handle, succeeded=True)
 
+def show_SUBMENU7():
+   #add in the genre folders for the Top 25 items
+   addDirectoryItem(name=SUBMENU7a, parameters={ PARAMETER_KEY_MODE:MODE7a }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7b, parameters={ PARAMETER_KEY_MODE:MODE7b }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7c, parameters={ PARAMETER_KEY_MODE:MODE7c }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7d, parameters={ PARAMETER_KEY_MODE:MODE7d }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7e, parameters={ PARAMETER_KEY_MODE:MODE7e }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7f, parameters={ PARAMETER_KEY_MODE:MODE7f }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7g, parameters={ PARAMETER_KEY_MODE:MODE7g }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7h, parameters={ PARAMETER_KEY_MODE:MODE7h }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7i, parameters={ PARAMETER_KEY_MODE:MODE7i }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7j, parameters={ PARAMETER_KEY_MODE:MODE7j }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7k, parameters={ PARAMETER_KEY_MODE:MODE7k }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7l, parameters={ PARAMETER_KEY_MODE:MODE7l }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7m, parameters={ PARAMETER_KEY_MODE:MODE7m }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7n, parameters={ PARAMETER_KEY_MODE:MODE7n }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7o, parameters={ PARAMETER_KEY_MODE:MODE7o }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7p, parameters={ PARAMETER_KEY_MODE:MODE7p }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7q, parameters={ PARAMETER_KEY_MODE:MODE7q }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7r, parameters={ PARAMETER_KEY_MODE:MODE7r }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7s, parameters={ PARAMETER_KEY_MODE:MODE7s }, isFolder=True)
+   addDirectoryItem(name=SUBMENU7t, parameters={ PARAMETER_KEY_MODE:MODE7t }, isFolder=True)
+   xbmcplugin.endOfDirectory(handle=handle, succeeded=True)
+   
+
+
 # parameter values
 params = parameters_string_to_dict(sys.argv[2])
 mode = int(params.get(PARAMETER_KEY_MODE, "0"))
@@ -193,3 +261,45 @@ elif mode == MODE6k:
    ok = show_SUBMENU6()
 elif mode == MODE6l:
    ok = show_SUBMENU6()
+elif mode == MODE7:
+   ok = show_SUBMENU7()
+elif mode == MODE7a:
+  getTop25Feed("296")
+elif mode == MODE7b:
+  getTop25Feed("623")
+elif mode == MODE7c:
+  getTop25Feed("2444")
+elif mode == MODE7d:
+  getTop25Feed("302")
+elif mode == MODE7e:
+  getTop25Feed("306")
+elif mode == MODE7f:
+  getTop25Feed("307")
+elif mode == MODE7g:
+  getTop25Feed("864")
+elif mode == MODE7h:
+  getTop25Feed("315")
+elif mode == MODE7i:
+  getTop25Feed("2108")
+elif mode == MODE7j:
+  getTop25Feed("2514")
+elif mode == MODE7k:
+  getTop25Feed("330")
+elif mode == MODE7l:
+  getTop25Feed("338")
+elif mode == MODE7m:
+  getTop25Feed("343")
+elif mode == MODE7n:
+  getTop25Feed("2310")
+elif mode == MODE7o:
+  getTop25Feed("371")
+elif mode == MODE7p:
+  getTop25Feed("373")
+elif mode == MODE7q:
+  getTop25Feed("2223")
+elif mode == MODE7r:
+  getTop25Feed("2190")
+elif mode == MODE7s:
+  getTop25Feed("2197")
+elif mode == MODE7t:
+  getTop25Feed("387")
