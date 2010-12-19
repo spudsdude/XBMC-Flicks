@@ -202,7 +202,7 @@ class NetflixUser:
 
         parameters['v'] = str('2.0')
         parameters['filters'] = 'http://api.netflix.com/categories/title_formats/instant'
-        parameters['expand'] = '@title,@cast,@synopsis,@directors,@formats,@episodes,@short_synopsis'
+        parameters['expand'] = '@title,@synopsis,@directors,@formats,@episodes,@short_synopsis'
         parameters['output'] = 'json'
         
         if not isinstance(accessToken, oauth.OAuthToken):

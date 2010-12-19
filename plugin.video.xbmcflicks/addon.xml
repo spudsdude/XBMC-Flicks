@@ -5,6 +5,7 @@
        provider-name="TeamUMX">
     <requires>
         <import addon="xbmc.python" version="1.0"/>
+        <import addon="script.module.simplejson"/>
     </requires>
     <extension point="xbmc.python.pluginsource"
                library="default.py">
@@ -13,6 +14,6 @@
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
         <summary lang="en">XBMC Flicks</summary>
-        <description lang="en">Netflix for XBMC.. NOTE: You will need to modify the playercorefactory.xml and advanced settings.xml in order to use this addon for playback. Examples can be found with the plugin in the resources..reference_xml_files folder</description>
+        <description lang="en">Netflix for XBMC.. Windows and OSX only.. NOTE: You will need to modify the playercorefactory.xml and advanced settings.xml in order to use this addon for playback. Examples can be found with the plugin in the resources..reference_xml_files folder</description>
             </extension>
 </addon>

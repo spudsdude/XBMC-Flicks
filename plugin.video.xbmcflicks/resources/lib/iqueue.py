@@ -2,10 +2,8 @@ from Netflix import *
 import getopt
 import time 
 import re
-import xbmcplugin
-import xbmcgui
+import xbmcplugin, xbmcaddon, xbmcgui, xbmc
 import urllib, urllib2
-import xbmc
 import webbrowser
 import os
 from settings import *
@@ -94,7 +92,7 @@ def getAuth(netflix, verbose):
 
 def saveUserInfo():
     #create the file
-    f = open('special://home/addons/plugin.video.xbmcflicks/resources/usersettings/userinfo.txt','r+')
+    f = open(USERINFO_FOLDER + 'userinfo.txt','r+')
     setting ='requestKey=' + MY_USER['request']['key'] + '\n' + 'requestSecret=' + MY_USER['request']['secret'] + '\n' +'accessKey=' + MY_USER['access']['key']+ '\n' + 'accessSecret=' + MY_USER['access']['secret']
     f.write(setting)
     f.close()
@@ -136,14 +134,14 @@ def addLink(name,url,curX,rootID=None):
     
 def writeLinkFile(id, title):
     #check to see if we already have the file
-    havefile = os.path.isfile('special://home/addons/plugin.video.xbmcflicks/resources/links/' + id + '.html')
+    havefile = os.path.isfile(LINKS_FOLDER + id + '.html')
     if(not havefile):
         #create the file
         player = "WiPlayerCommunityAPI"
         if(useAltPlayer):
             player = "WiPlayer"
         redirect = "<!doctype html public \"-//W3C//DTD HTML 4.0 Transitional//EN\"><html><head><title>Requesting Video: " + title + "</title><meta http-equiv=\"REFRESH\" content=\"0;url=http://www.netflix.com/" + player + "?lnkctr=apiwn&nbb=y&devKey=gnexy7jajjtmspegrux7c3dj&movieid=" + id + "\"></head><body bgcolor=\"#FF0000\"> <p>Redirecting to Netflix in a moment ...</p></body></html>"
-        f = open('special://home/addons/plugin.video.xbmcflicks/resources/links/' + id + '.html','r+')
+        f = open(LINKS_FOLDER + id + '.html','r+')
         f.write(redirect)
         f.close()
 
@@ -451,14 +449,14 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
         else:
             return curX
     if(not curX.TvShow):
-        addLink(curX.TitleShort,REAL_PATH + curX.TitleShortLink + '.html', curX)
+        addLink(curX.TitleShort,REAL_LINK_PATH + curX.TitleShortLink + '.html', curX)
         #write the link file
         writeLinkFile(curX.TitleShortLink, curX.Title)
         return curX
 
     #if we are here, it's a tvshow, see if we should expand them automatically (user setting)
     if(not AUTO_EXPAND_EPISODES):
-        addLink(curX.TitleShort,REAL_PATH + curX.TitleShortLink + '.html', curX)
+        addLink(curX.TitleShort,REAL_LINK_PATH + curX.TitleShortLink + '.html', curX)
         #write the link file
         writeLinkFile(curX.TitleShortLink, curX.Title)
         return curX
@@ -516,7 +514,7 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
                 curXe.TitleShortLink.strip()
                 
                 #add and write file
-                addLink(curXe.TitleShort,REAL_PATH + curXe.TitleShortLink + '.html', curXe, curX.ID)
+                addLink(curXe.TitleShort,REAL_LINK_PATH + curXe.TitleShortLink + '.html', curXe, curX.ID)
                 writeLinkFile(curXe.TitleShortLink, curXe.Title)
             else:
                 #don't add it
@@ -640,7 +638,7 @@ def convertRSSFeed(tData, intLimit):
             exit
 
         #add the link to the UI
-        addLink(curX.TitleShort,REAL_PATH + curX.ID + '.html', curX)
+        addLink(curX.TitleShort,REAL_LINK_PATH + curX.ID + '.html', curX)
 
         #write the link file
         writeLinkFile(curX.ID, curX.Title)
@@ -673,12 +671,19 @@ def initApp():
     global pg
     global APPEND_YEAR_TO_TITLE
     global POSTER_QUAL
-    global REAL_PATH
     global MAX_INSTANTQUEUE_RETREVE
     global MAX_RATING
     global SHOW_RATING_IN_TITLE
     global YEAR_LIMITER
     global CUR_IMAGE_MIRROR_NUM
+
+    global ROOT_FOLDER
+    global WORKING_FOLDER
+    global LINKS_FOLDER
+    global REAL_LINK_PATH
+    global IMAGE_FOLDER
+    global USERINFO_FOLDER
+    
     arg = int(sys.argv[1])
     APP_NAME = 'xbmcflix'
     API_KEY = 'gnexy7jajjtmspegrux7c3dj'
@@ -693,19 +698,48 @@ def initApp():
     useAltPlayer = getUserSettingAltPlayer(arg)
     POSTER_QUAL = getUserSettingPosterQuality(arg)
     APPEND_YEAR_TO_TITLE = getUserSettingAppendYear(arg)
-    REAL_PATH = xbmc.translatePath('special://home/addons/plugin.video.xbmcflicks/resources/links/')
+    
     MAX_INSTANTQUEUE_RETREVE = getUserSettingMaxIQRetreve(arg)
     MAX_RATING = getUserSettingRatingLimit(arg)
     SHOW_RATING_IN_TITLE = getUserSettingShowRatingInTitle(arg)
     YEAR_LIMITER = getUserSettingYearLimit(arg)
+
+    #get addon info
+    __settings__ = xbmcaddon.Addon(id='plugin.video.xbmcflicks')
+    ROOT_FOLDER = 'special://home/addons/plugin.video.xbmcflicks/'
+    IMAGE_FOLDER = ROOT_FOLDER + 'resources/'
+    WORKING_FOLDER = __settings__.getAddonInfo("profile")
+    LINKS_FOLDER = WORKING_FOLDER + 'links/'
+    REAL_LINK_PATH = xbmc.translatePath(WORKING_FOLDER + 'links/')
+    USERINFO_FOLDER = WORKING_FOLDER
+
+    print "root folder: " + ROOT_FOLDER
+    print "working folder: " + WORKING_FOLDER
+    print "real link path: " + REAL_LINK_PATH
+    print "image folder: " + IMAGE_FOLDER
+    print "userinfo folder: " + USERINFO_FOLDER
     
     reobj = re.compile(r"200(.{10}).*?644(.*?)4x2(.).*?5118")
     match = reobj.search(API_SECRET)
     if match:
         result = match.group(1)
         API_SECRET = result
-    #load the userinfo.properties file
-    userstring = open('special://home/addons/plugin.video.xbmcflicks/resources/usersettings/userinfo.txt', 'r').read()
+
+    #ensure we have a links folder in addon_data
+    if not os.path.exists(LINKS_FOLDER):
+        os.makedirs(LINKS_FOLDER)
+    
+    #get user info
+    userInfoFileLoc = USERINFO_FOLDER + 'userinfo.txt'
+    print "USER INFO FILE LOC: " + userInfoFileLoc
+    havefile = os.path.isfile(userInfoFileLoc)
+    if(not havefile):
+        f = open(userInfoFileLoc,'r+')
+        f.write("")
+        f.close()
+
+    userstring = open(str(userInfoFileLoc),'r').read()
+        
     reobj = re.compile(r"requestKey=(.*)\nrequestSecret=(.*)\naccessKey=(.*)\naccessSecret=(.*)")
     match = reobj.search(userstring)
     if match:
