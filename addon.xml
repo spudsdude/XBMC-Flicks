@@ -12,8 +12,8 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
-        <platform>all</platform>
+        <platform>windx wingl osx</platform>
         <summary lang="en">XBMC Flicks</summary>
         <description lang="en">Netflix for XBMC.. Windows and OSX only.. NOTE: You will need to modify the playercorefactory.xml and advanced settings.xml in order to use this addon for playback. Examples can be found with the plugin in the resources folder</description>
-            </extension>
+    </extension>
 </addon>
