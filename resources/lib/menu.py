@@ -339,7 +339,7 @@ elif mode == MODE4:
     if (keyboard.isConfirmed()):
       arg = keyboard.getText()
       #print "keyboard returned: " + keyboard.getText()
-      doSearch(arg)
+      doSearch(arg, "Instant", True)
     else:
       print "user canceled"
 elif mode == MODE5:
@@ -419,6 +419,15 @@ elif mode == MODED1m:
    getDVDQueue(4)
 elif mode == MODED1t:
    getDVDQueue(5)
+elif mode == MODED2:
+   keyboard = xbmc.Keyboard()
+   keyboard.doModal()
+   if (keyboard.isConfirmed()):
+      arg = keyboard.getText()
+      #print "keyboard returned: " + keyboard.getText()
+      doSearch(arg, "Disc", False)
+   else:
+      print "user canceled"
 elif mode == MODED7:
    ok = show_SUBMENUD7()
 elif mode == MODED7a:
@@ -463,3 +472,9 @@ elif mode == MODED7t:
    getTop25FeedD("387")
 elif mode == MODER:
    show_rentalhistory_menu()
+elif mode == MODER1:
+   rhShipped()
+elif mode == MODER2:
+   rhReturned()
+elif mode == MODER3:
+   rhWatched()

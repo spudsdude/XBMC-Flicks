@@ -158,7 +158,7 @@ class NetflixUser:
         
         return ret
 
-    def getRentalHistory(self,historyType=None,startIndex=None,
+    def getRentalHistoryv1(self,historyType=None,startIndex=None,
                                     maxResults=None,updatedMin=None):
         accessToken=self.accessToken
         parameters = {}
@@ -174,6 +174,40 @@ class NetflixUser:
                                     accessToken['key'],
                                     accessToken['secret'] )
 
+        if not historyType:
+            requestUrl = '/users/%s/rental_history' % (accessToken.key)
+        else:
+            requestUrl = '/users/%s/rental_history/%s' % (accessToken.key,historyType)
+        
+        try:
+            info = simplejson.loads( self.client._getResource( 
+                                    requestUrl,
+                                    parameters=parameters,
+                                    token=accessToken ) )
+        except:
+            return {}
+            
+        return info
+
+    def getRentalHistory(self,historyType=None,startIndex=None, maxResults=None,updatedMin=None):
+        accessToken=self.accessToken
+        parameters = {}
+        if startIndex:
+            parameters['start_index'] = startIndex
+        if maxResults:
+            parameters['max_results'] = maxResults
+        if updatedMin:
+            parameters['updated_min'] = updatedMin
+
+        parameters['v'] = str('2.0')
+        parameters['expand'] = '@title,@synopsis,@directors,@formats,@episodes,@short_synopsis'
+        parameters['output'] = 'json'
+        
+        if not isinstance(accessToken, oauth.OAuthToken):
+            accessToken = oauth.OAuthToken( 
+                                    accessToken['key'],
+                                    accessToken['secret'] )
+        #history type must be: NULL, shipped, returned, or watched
         if not historyType:
             requestUrl = '/users/%s/rental_history' % (accessToken.key)
         else:
@@ -339,7 +373,7 @@ class NetflixUser:
             
         return info
 
-    def searchTitles(self, term,startIndex=None,maxResults=None):
+    def searchTitles(self, term, queue, startIndex=None,maxResults=None):
         requestUrl = '/catalog/titles'
         parameters = {'term': term}
         if startIndex:
@@ -348,8 +382,8 @@ class NetflixUser:
             parameters['max_results'] = maxResults
 
         parameters['v'] = str('2.0')
-        parameters['filters'] = 'http://api.netflix.com/categories/title_formats/instant'
-        parameters['expand'] = '@title,@cast,@synopsis,@directors,@formats,@episodes,@short_synopsis'
+        parameters['filters'] = 'http://api.netflix.com/categories/title_formats/' + queue
+        parameters['expand'] = '@title,@synopsis,@directors,@formats,@episodes,@short_synopsis'
         parameters['output'] = 'json'
         info = simplejson.loads( self.client._getResource( 
                                     requestUrl,

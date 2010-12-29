@@ -365,7 +365,7 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
     #genre
     matchGenre = re.search(r"genres': \[?{.*?u'name': u'(.*?)'}", curQueueItem, re.DOTALL | re.MULTILINE)
     if matchGenre:
-	curX.Genres = matchGenre.group(1).strip()
+        curX.Genres = matchGenre.group(1).strip()
 
     #year
     matchYear = re.search(r'[\'"]release_year[\'"]: u{0,1}[\'"](\d{4})[\'"]', curQueueItem)
@@ -741,6 +741,27 @@ def convertRSSFeed(tData, intLimit, DiscQueue=None):
             #write the link file
             writeLinkFile(curX.ID, curX.Title)
 
+def getUserRentalHistory(netflix, user, strHistoryType, displayWhat=None):
+    print "*** What's the rental history? ***"
+    feeds = ""
+    if(strHistoryType):
+        feeds = netflix.user.getRentalHistory(None,None,500)
+    else:
+        feeds = netflix.user.getRentalHistory(strHistoryType,None,500)
+        
+    if (VERBOSE_USER_LOG):
+        print feeds
+  
+    counter = 0
+    reobj = re.compile(r"(?sm)(?P<main>('item': )((?!('item': )).)*)", re.DOTALL | re.MULTILINE)
+    #real processing begins here
+    for match in reobj.finditer(str(feeds)):
+        curX = XInfo()
+        curQueueItem = match.group(1)
+
+        #now parse out each item
+        curX = getMovieDataFromFeed(curX, curQueueItem, False, netflix, False, displayWhat)
+
 CUR_IMAGE_MIRROR_NUM = 0
 
 def get_CurMirrorNum():
@@ -851,11 +872,11 @@ def initApp():
         MY_USER['request']['key'] = match.group(1).strip()
         MY_USER['request']['secret'] = match.group(2).strip()
         MY_USER['access']['key'] = match.group(3).strip()
-	MY_USER['access']['secret'] = match.group(4).strip()
-	print "finished loading up user information from file"
+        MY_USER['access']['secret'] = match.group(4).strip()
+        print "finished loading up user information from file"
     else:
         #no match, need to fire off the user auth from the start
-	print "couldn't load user information from userinfo.properties file"
+        print "couldn't load user information from userinfo.properties file"
     #auth the user
     netflixClient = NetflixClient(APP_NAME, API_KEY, API_SECRET, CALLBACK, VERBOSE_USER_LOG)
     user = getAuth(netflixClient,VERBOSE_USER_LOG)
@@ -916,13 +937,17 @@ def getTop25FeedD(strArg):
     xbmcplugin.setContent(int(sys.argv[1]),'Movies')
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
-def doSearch(strArg):
+def doSearch(strArg, strQueue, strInstantOnly=None):
+    instantOnly = False
+    if(strInstantOnly):
+        instantOnly = True
+    
     #title search
-    print "looking for instant view items that match %s" % strArg
+    print "looking for items that match " + str(strArg ) + " in " + str(strQueue)
     initApp()
     if(not user):
         exit    
-    feeds = netflixClient.user.searchTitles(strArg,0,100)
+    feeds = netflixClient.user.searchTitles(strArg,strQueue,0,100)
     if(DEBUG):
         print simplejson.dumps(feeds,indent=4)
     counter = 0
@@ -934,7 +959,7 @@ def doSearch(strArg):
         if(DEBUG):
             print "current queue item from regex is: " + str(curQueueItem)
         #now parse out each item
-        curX = getMovieDataFromFeed(curX, curQueueItem, False, netflixClient, True)
+        curX = getMovieDataFromFeed(curX, curQueueItem, False, netflixClient, instantOnly)
     time.sleep(1)
     xbmcplugin.setContent(int(sys.argv[1]),'Movies')
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
@@ -942,6 +967,33 @@ def doSearch(strArg):
 def getDVDQueue(displayWhat):
     initApp()
     getUserDiscQueue(netflixClient,user, displayWhat)
+    if(not user):
+        exit
+    time.sleep(1)
+    xbmcplugin.setContent(int(sys.argv[1]),'Movies')
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
+
+def rhShipped():
+    initApp()
+    getUserRentalHistory(netflixClient,user, "shipped", "5")
+    if(not user):
+        exit
+    time.sleep(1)
+    xbmcplugin.setContent(int(sys.argv[1]),'Movies')
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
+
+def rhReturned():
+    initApp()
+    getUserRentalHistory(netflixClient,user, "returned", "5")
+    if(not user):
+        exit
+    time.sleep(1)
+    xbmcplugin.setContent(int(sys.argv[1]),'Movies')
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
+
+def rhWatched():
+    initApp()
+    getUserRentalHistory(netflixClient,user, "watched")
     if(not user):
         exit
     time.sleep(1)

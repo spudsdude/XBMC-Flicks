@@ -152,11 +152,11 @@ def initApp():
         MY_USER['request']['key'] = match.group(1).strip()
         MY_USER['request']['secret'] = match.group(2).strip()
         MY_USER['access']['key'] = match.group(3).strip()
-	MY_USER['access']['secret'] = match.group(4).strip()
-	print "finished loading up user information from file"
+        MY_USER['access']['secret'] = match.group(4).strip()
+        print "finished loading up user information from file"
     else:
         #no match, need to fire off the user auth from the start
-	print "couldn't load user information from userinfo.properties file"
+        print "couldn't load user information from userinfo.properties file"
     #auth the user
     netflixClient = NetflixClient(APP_NAME, API_KEY, API_SECRET, CALLBACK, VERBOSE_USER_LOG)
     user = getAuth(netflixClient,VERBOSE_USER_LOG)
@@ -182,11 +182,11 @@ if __name__ == '__main__':
     
     match = re.search(r"(.*?)(delete|post|discdelete|discpost|disctoppost)", strArgs, re.IGNORECASE)
     if match:
-	movieid = match.group(1)
-	print movieid
-	action = match.group(2)
-	actionParams = match.group(2)
-	print action
+        movieid = match.group(1)
+        print movieid
+        action = match.group(2)
+        actionParams = match.group(2)
+        print action
     else:
         "print unable to parse action item, exiting"
         exit
