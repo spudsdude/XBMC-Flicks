@@ -173,14 +173,19 @@ if __name__ == '__main__':
     strArgs = str(sys.argv[1])
     movieid = ""
     action = ""
+    actionParams = ""
     verboseAction = ""
     verboseDirection = ""
     details = ""
-    match = re.search(r"(.*?)(delete|post)", strArgs, re.IGNORECASE)
+    position = ""
+    discQueue = False
+    
+    match = re.search(r"(.*?)(delete|post|discdelete|discpost|disctoppost)", strArgs, re.IGNORECASE)
     if match:
 	movieid = match.group(1)
 	print movieid
 	action = match.group(2)
+	actionParams = match.group(2)
 	print action
     else:
         "print unable to parse action item, exiting"
@@ -189,9 +194,25 @@ if __name__ == '__main__':
     if(action == "post"):
         verboseAction = "Add"
         verboseDirection = "to"
-    else:
+    elif(action == "delete"):
         verboseAction = "Remove"
         verboseDirection = "from"
+    elif(action == "discpost"):
+        action = "post"
+        verboseAction = "Add"
+        verboseDirection = "to"
+        discQueue = True
+    elif(action == "disctoppost"):
+        action = "post"
+        verboseAction = "Add"
+        verboseDirection = "to"
+        discQueue = True
+        position = "1"
+    elif(action == "discdelete"):
+        action = "delete"
+        verboseAction = "Remove"
+        verboseDirection = "from"
+        discQueue = True
 
     netflixClient = NetflixClient(APP_NAME, API_KEY, API_SECRET, CALLBACK, VERBOSE_USER_LOG)
     #auth the user
@@ -200,15 +221,32 @@ if __name__ == '__main__':
     #if we have a user, do the action
     if user:
         print "got user from main init of modQueue script"
-        result = user.modifyQueue(str(movieid), str(action))
-        matchr = re.search(r"'message': u'(.*?)'", str(result), re.IGNORECASE)
-        if matchr:
-            details = matchr.group(1)
-        else:
-            details = str(result)
-        dialog = xbmcgui.Dialog()
-        ok = dialog.ok("Instant Queue: " + verboseAction + " " + movieid, details)
-
-        #refresh UI on delete
-        if(action == "delete"):
+        if(not discQueue):         
+            result = user.modifyQueue(str(movieid), str(action))
+            matchr = re.search(r"'message': u'(.*?)'", str(result), re.IGNORECASE)
+            if matchr:
+                details = matchr.group(1)
+            else:
+                details = str(result)
+            dialog = xbmcgui.Dialog()
+            ok = dialog.ok("Instant Queue: " + verboseAction + " " + movieid, details)
+        if(discQueue):
+            if(position == ""):
+                result = user.modifyQueueDisc(str(movieid), str(action))
+            else:
+                result = user.modifyQueueDisc(str(movieid), str(action), position)
+            matchr = re.search(r"'message': u'(.*?)'", str(result), re.IGNORECASE)
+            if matchr:
+                details = matchr.group(1)
+            else:
+                details = str(result)
+            dialog = xbmcgui.Dialog()
+            ok = dialog.ok("Instant Queue: " + verboseAction + " " + movieid, details)
+         
+        #refresh UI on delete, disc delete, or move to top
+        if(actionParams == "delete"):
+            xbmc.executebuiltin("Container.Refresh")
+        elif(actionParams == "discdelete"):
+            xbmc.executebuiltin("Container.Refresh")
+        elif(actionParams == "disctoppost"):
             xbmc.executebuiltin("Container.Refresh")

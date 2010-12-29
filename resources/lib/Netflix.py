@@ -225,6 +225,41 @@ class NetflixUser:
             
         return info
 
+    def getDiscQueue(self,historyType=None,startIndex=None,maxResults=None,updatedMin=None):
+        accessToken=self.accessToken
+        parameters = {}
+        if startIndex:
+            parameters['start_index'] = startIndex
+        if maxResults:
+            parameters['max_results'] = maxResults
+        if updatedMin:
+            parameters['updated_min'] = updatedMin
+
+        parameters['v'] = str('2.0')
+        parameters['filters'] = 'http://api.netflix.com/categories/title_formats/disc'
+        parameters['expand'] = '@title,@synopsis,@directors,@formats,@episodes,@short_synopsis'
+        parameters['output'] = 'json'
+        
+        if not isinstance(accessToken, oauth.OAuthToken):
+            accessToken = oauth.OAuthToken( 
+                                    accessToken['key'],
+                                    accessToken['secret'] )
+
+        if not historyType:
+            requestUrl = '/users/%s/queues/disc/available' % (accessToken.key)
+        else:
+            requestUrl = '/users/%s/queues/disc/available/%s' % (accessToken.key,historyType)
+        
+        try:
+            info = simplejson.loads( self.client._getResource( 
+                                    requestUrl,
+                                    parameters=parameters,
+                                    token=accessToken ) )
+        except:
+            return {}
+            
+        return info
+
     def getRecommendedQueue(self,startIndex=None,maxResults=None,updatedMin=None):
         accessToken=self.accessToken
         parameters = {}
@@ -337,6 +372,35 @@ class NetflixUser:
             requestUrl = '/users/'+ accessToken.key + '/queues/instant/available'
         else:
             requestUrl = '/users/'+ accessToken.key + '/queues/instant/available/' + str(ID) 
+        print "------- REQUESTED URL IS: " + requestUrl
+        try:
+            info = simplejson.loads( self.client._getResource( 
+                                    requestUrl,
+                                    parameters=parameters,
+                                    token=accessToken ) )
+        except:
+            return {}
+            
+        return info
+
+    def modifyQueueDisc(self, ID, method, position=None):
+        accessToken=self.accessToken
+        parameters = {}
+        #to add, use Post, to remove use Delete
+        parameters['method'] = method
+        if(position):
+            parameters['position'] = str(position)
+        if (method == "post"):
+            parameters['title_ref'] = 'http://api.netflix.com/catalog/titles/movies/' + str(ID)
+        if not isinstance(accessToken, oauth.OAuthToken):
+            accessToken = oauth.OAuthToken( 
+                                    accessToken['key'],
+                                    accessToken['secret'] )
+
+        if (method == "post"):
+            requestUrl = '/users/'+ accessToken.key + '/queues/disc/available'
+        else:
+            requestUrl = '/users/'+ accessToken.key + '/queues/disc/available/' + str(ID) 
         print "------- REQUESTED URL IS: " + requestUrl
         try:
             info = simplejson.loads( self.client._getResource( 
