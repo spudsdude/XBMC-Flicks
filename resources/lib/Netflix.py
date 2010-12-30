@@ -25,8 +25,7 @@ class NetflixUser:
         self.requestTokenUrl = REQUEST_TOKEN_URL
         self.accessTokenUrl  = ACCESS_TOKEN_URL
         self.authorizationUrl = AUTHORIZATION_URL
-        self.accessToken = oauth.OAuthToken( user['access']['key'],
-                                             user['access']['secret'] )
+        self.accessToken = oauth.OAuthToken(user['access']['key'], user['access']['secret'] )
         self.client = client
         self.data = None
 
@@ -61,9 +60,7 @@ class NetflixUser:
         client = self.client
         
         if not isinstance(requestToken, oauth.OAuthToken):
-                requestToken = oauth.OAuthToken( 
-                                    requestToken['key'], 
-                                    requestToken['secret'] )
+                requestToken = oauth.OAuthToken(requestToken['key'], requestToken['secret'] )
         oauthRequest = oauth.OAuthRequest.from_consumer_and_token(  
                                     client.consumer,
                                     token=requestToken,
@@ -82,15 +79,11 @@ class NetflixUser:
         accessToken=self.accessToken
 
         if not isinstance(accessToken, oauth.OAuthToken):
-            accessToken = oauth.OAuthToken( 
-                                    accessToken['key'], 
-                                    accessToken['secret'] )
+            accessToken = oauth.OAuthToken(accessToken['key'], accessToken['secret'] )
         
         requestUrl = '/users/%s' % (accessToken.key)
         
-        info = simplejson.loads( self.client._getResource( 
-                                    requestUrl, 
-                                    token=accessToken ) )
+        info = simplejson.loads( self.client._getResource(requestUrl, token=accessToken ) )
         self.data = info['user']
         return self.data
         
@@ -114,8 +107,7 @@ class NetflixUser:
             print errorString
             sys.exit(1)
         try:
-            info = simplejson.loads(self.client._getResource( 
-                                    url,token=accessToken ))
+            info = simplejson.loads(self.client._getResource(url,token=accessToken ))
         except:
             return []
         else:
@@ -138,10 +130,7 @@ class NetflixUser:
                 urls.append(discInfo['id'])
         parameters = { 'title_refs': ','.join(urls) }
         
-        info = simplejson.loads( self.client._getResource( 
-                                    requestUrl, 
-                                    parameters=parameters, 
-                                    token=accessToken ) )
+        info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
         
         ret = {}
         for title in info['ratings']['ratings_item']:
@@ -170,9 +159,7 @@ class NetflixUser:
             parameters['updated_min'] = updatedMin
 
         if not isinstance(accessToken, oauth.OAuthToken):
-            accessToken = oauth.OAuthToken( 
-                                    accessToken['key'],
-                                    accessToken['secret'] )
+            accessToken = oauth.OAuthToken(accessToken['key'], accessToken['secret'] )
 
         if not historyType:
             requestUrl = '/users/%s/rental_history' % (accessToken.key)
@@ -180,10 +167,7 @@ class NetflixUser:
             requestUrl = '/users/%s/rental_history/%s' % (accessToken.key,historyType)
         
         try:
-            info = simplejson.loads( self.client._getResource( 
-                                    requestUrl,
-                                    parameters=parameters,
-                                    token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
         except:
             return {}
             
@@ -204,9 +188,7 @@ class NetflixUser:
         parameters['output'] = 'json'
         
         if not isinstance(accessToken, oauth.OAuthToken):
-            accessToken = oauth.OAuthToken( 
-                                    accessToken['key'],
-                                    accessToken['secret'] )
+            accessToken = oauth.OAuthToken(accessToken['key'], accessToken['secret'] )
         #history type must be: NULL, shipped, returned, or watched
         if not historyType:
             requestUrl = '/users/%s/rental_history' % (accessToken.key)
@@ -214,10 +196,7 @@ class NetflixUser:
             requestUrl = '/users/%s/rental_history/%s' % (accessToken.key,historyType)
         
         try:
-            info = simplejson.loads( self.client._getResource( 
-                                    requestUrl,
-                                    parameters=parameters,
-                                    token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
         except:
             return {}
             
@@ -240,9 +219,7 @@ class NetflixUser:
         parameters['output'] = 'json'
         
         if not isinstance(accessToken, oauth.OAuthToken):
-            accessToken = oauth.OAuthToken( 
-                                    accessToken['key'],
-                                    accessToken['secret'] )
+            accessToken = oauth.OAuthToken(accessToken['key'], accessToken['secret'] )
 
         if not historyType:
             requestUrl = '/users/%s/queues/instant/available' % (accessToken.key)
@@ -250,10 +227,7 @@ class NetflixUser:
             requestUrl = '/users/%s/queues/instant/available/%s' % (accessToken.key,historyType)
         
         try:
-            info = simplejson.loads( self.client._getResource( 
-                                    requestUrl,
-                                    parameters=parameters,
-                                    token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
         except:
             return {}
             
@@ -270,7 +244,38 @@ class NetflixUser:
             parameters['updated_min'] = updatedMin
 
         parameters['v'] = str('2.0')
-        parameters['filters'] = 'http://api.netflix.com/categories/title_formats/disc'
+        #parameters['filters'] = 'http://api.netflix.com/categories/title_formats/disc'
+        parameters['expand'] = '@title,@synopsis,@directors,@formats,@episodes,@short_synopsis'
+        parameters['output'] = 'json'
+        
+        if not isinstance(accessToken, oauth.OAuthToken):
+            accessToken = oauth.OAuthToken(accessToken['key'], accessToken['secret'] )
+
+        if not historyType:
+            requestUrl = '/users/%s/queues/disc' % (accessToken.key)
+        else:
+            requestUrl = '/users/%s/queues/disc/available/%s' % (accessToken.key,historyType)
+        
+        try:
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
+        except:
+            return {}
+            
+        return info
+
+    def getAtHomeList(self,historyType=None,startIndex=None,
+                                    maxResults=None,updatedMin=None):
+        accessToken=self.accessToken
+        parameters = {}
+        if startIndex:
+            parameters['start_index'] = startIndex
+        if maxResults:
+            parameters['max_results'] = maxResults
+        if updatedMin:
+            parameters['updated_min'] = updatedMin
+
+        parameters['v'] = str('2.0')
+        parameters['filters'] = 'http://api.netflix.com/categories/title_formats/instant'
         parameters['expand'] = '@title,@synopsis,@directors,@formats,@episodes,@short_synopsis'
         parameters['output'] = 'json'
         
@@ -279,16 +284,13 @@ class NetflixUser:
                                     accessToken['key'],
                                     accessToken['secret'] )
 
-        if not historyType:
-            requestUrl = '/users/%s/queues/disc/available' % (accessToken.key)
-        else:
-            requestUrl = '/users/%s/queues/disc/available/%s' % (accessToken.key,historyType)
+        #if not historyType:
+        requestUrl = '/users/%s/at_home' % (accessToken.key)
+        #else:
+        #    requestUrl = '/users/%s/queues/instant/available/%s' % (accessToken.key,historyType)
         
         try:
-            info = simplejson.loads( self.client._getResource( 
-                                    requestUrl,
-                                    parameters=parameters,
-                                    token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
         except:
             return {}
             
@@ -309,20 +311,14 @@ class NetflixUser:
         parameters['output'] = 'json'
 
         if not isinstance(accessToken, oauth.OAuthToken):
-            accessToken = oauth.OAuthToken( 
-                                    accessToken['key'],
-                                    accessToken['secret'] )
+            accessToken = oauth.OAuthToken(accessToken['key'], accessToken['secret'] )
 
         requestUrl = '/users/%s/recommendations' % (accessToken.key)
         
         try:
-            info = simplejson.loads( self.client._getResource( 
-                                    requestUrl,
-                                    parameters=parameters,
-                                    token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
         except:
             return {}
-        #print str(simplejson.dumps(info,indent=4))
         return info
 
     #http://api.netflix.com/catalog/titles/series/60030529/seasons/60030679/episodes
@@ -338,10 +334,7 @@ class NetflixUser:
         requestUrl = '/catalog/titles/series/' + str(seriesId) + '/seasons/' + str(seasonId) + "/episodes"
       
         try:
-            info = simplejson.loads( self.client._getResource( 
-                                    requestUrl,
-                                    parameters=parameters,
-                                    token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
         except:
             return {}
             
@@ -357,17 +350,12 @@ class NetflixUser:
         parameters['filters'] = 'http://api.netflix.com/categories/title_formats/instant'
 
         if not isinstance(accessToken, oauth.OAuthToken):
-            accessToken = oauth.OAuthToken( 
-                                    accessToken['key'],
-                                    accessToken['secret'] )
+            accessToken = oauth.OAuthToken(accessToken['key'], accessToken['secret'] )
 
         requestUrl = '/catalog/titles/movies/' + str(ID) + '/similars'
         print requestUrl
         try:
-            info = simplejson.loads( self.client._getResource( 
-                                    requestUrl,
-                                    parameters=parameters,
-                                    token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
         except:
             return {}
             
@@ -385,9 +373,7 @@ class NetflixUser:
         parameters['filters'] = 'http://api.netflix.com/categories/title_formats/' + queue
         parameters['expand'] = '@title,@synopsis,@directors,@formats,@episodes,@short_synopsis'
         parameters['output'] = 'json'
-        info = simplejson.loads( self.client._getResource( 
-                                    requestUrl,
-                                    parameters=parameters))
+        info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters))
         return info
 
     def modifyQueue(self, ID, method):
@@ -398,20 +384,14 @@ class NetflixUser:
         if (method == "post"):
             parameters['title_ref'] = 'http://api.netflix.com/catalog/titles/movies/' + str(ID)
         if not isinstance(accessToken, oauth.OAuthToken):
-            accessToken = oauth.OAuthToken( 
-                                    accessToken['key'],
-                                    accessToken['secret'] )
+            accessToken = oauth.OAuthToken(accessToken['key'], accessToken['secret'] )
 
         if (method == "post"):
             requestUrl = '/users/'+ accessToken.key + '/queues/instant/available'
         else:
             requestUrl = '/users/'+ accessToken.key + '/queues/instant/available/' + str(ID) 
-        print "------- REQUESTED URL IS: " + requestUrl
         try:
-            info = simplejson.loads( self.client._getResource( 
-                                    requestUrl,
-                                    parameters=parameters,
-                                    token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
         except:
             return {}
             
@@ -427,9 +407,7 @@ class NetflixUser:
         if (method == "post"):
             parameters['title_ref'] = 'http://api.netflix.com/catalog/titles/movies/' + str(ID)
         if not isinstance(accessToken, oauth.OAuthToken):
-            accessToken = oauth.OAuthToken( 
-                                    accessToken['key'],
-                                    accessToken['secret'] )
+            accessToken = oauth.OAuthToken(accessToken['key'], accessToken['secret'] )
 
         if (method == "post"):
             requestUrl = '/users/'+ accessToken.key + '/queues/disc/available'
@@ -437,10 +415,7 @@ class NetflixUser:
             requestUrl = '/users/'+ accessToken.key + '/queues/disc/available/' + str(ID) 
         print "------- REQUESTED URL IS: " + requestUrl
         try:
-            info = simplejson.loads( self.client._getResource( 
-                                    requestUrl,
-                                    parameters=parameters,
-                                    token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
         except:
             return {}
             

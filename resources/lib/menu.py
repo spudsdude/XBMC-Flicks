@@ -218,6 +218,8 @@ def show_disc_menu():
    addDirectoryItem(name=SUBMENUD1m, parameters={ PARAMETER_KEY_MODE:MODED1m }, isFolder=True)
    addDirectoryItem(name=SUBMENUD1t, parameters={ PARAMETER_KEY_MODE:MODED1t }, isFolder=True)
    addDirectoryItem(name=SUBMENUD7, parameters={ PARAMETER_KEY_MODE:MODED7 }, isFolder=True)
+   addDirectoryItem(name=SUBMENUD2, parameters={ PARAMETER_KEY_MODE:MODED2 }, isFolder=True)
+   addDirectoryItem(name=SUBMENUD3, parameters={ PARAMETER_KEY_MODE:MODED3 }, isFolder=True)
    
    xbmcplugin.endOfDirectory(handle=handle, succeeded=True)
 
@@ -339,7 +341,7 @@ elif mode == MODE4:
     if (keyboard.isConfirmed()):
       arg = keyboard.getText()
       #print "keyboard returned: " + keyboard.getText()
-      doSearch(arg, "Instant", True)
+      doSearch(arg, "instant", True)
     else:
       print "user canceled"
 elif mode == MODE5:
@@ -425,9 +427,11 @@ elif mode == MODED2:
    if (keyboard.isConfirmed()):
       arg = keyboard.getText()
       #print "keyboard returned: " + keyboard.getText()
-      doSearch(arg, "Disc", False)
+      doSearch(arg, "Disc")
    else:
       print "user canceled"
+elif mode == MODED3:
+   getHomeList()
 elif mode == MODED7:
    ok = show_SUBMENUD7()
 elif mode == MODED7a:

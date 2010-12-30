@@ -220,7 +220,6 @@ if __name__ == '__main__':
 
     #if we have a user, do the action
     if user:
-        print "got user from main init of modQueue script"
         if(not discQueue):         
             result = user.modifyQueue(str(movieid), str(action))
             matchr = re.search(r"'message': u'(.*?)'", str(result), re.IGNORECASE)
@@ -241,7 +240,7 @@ if __name__ == '__main__':
             else:
                 details = str(result)
             dialog = xbmcgui.Dialog()
-            ok = dialog.ok("Instant Queue: " + verboseAction + " " + movieid, details)
+            ok = dialog.ok("Disc Queue: " + verboseAction + " " + movieid, details)
          
         #refresh UI on delete, disc delete, or move to top
         if(actionParams == "delete"):
@@ -250,3 +249,5 @@ if __name__ == '__main__':
             xbmc.executebuiltin("Container.Refresh")
         elif(actionParams == "disctoppost"):
             xbmc.executebuiltin("Container.Refresh")
+    else:
+        print "Failed to get user information from main init of modQueue script"
