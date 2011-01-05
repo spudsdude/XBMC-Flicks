@@ -68,6 +68,7 @@ def getAuth(netflix, verbose):
             startBrowser(url)
         else:
             webbrowser.open(url)
+            print "browser open has completed"
             
         #display click ok when finished adding xbmcflicks as authorized app for your netflix account
         dialog = xbmcgui.Dialog()
