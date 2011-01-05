@@ -29,7 +29,7 @@ import random
 import urlparse
 import hmac
 import binascii
-
+import re
 
 VERSION = '1.0'
 HTTP_METHOD = 'GET'
