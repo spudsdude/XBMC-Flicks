@@ -72,8 +72,13 @@ def getAuth(netflix, verbose):
         #display click ok when finished adding xbmcflicks as authorized app for your netflix account
         dialog = xbmcgui.Dialog()
         ok = dialog.ok("After you have linked xbmcflick in netflix.", "Click OK after you finished the link in your browser window.")
+        print "The dialog was displayed, hopefully you read the text and waited until you authorized it before clicking ok."
         MY_USER['request']['key'] = tok.key
+        if(VERBOSE_USER_LOG):
+            print "user key set to: " + tok.key
         MY_USER['request']['secret'] = tok.secret
+        if(VERBOSE_USER_LOG):
+            print "user secret set to: " + tok.secret
         #now run the second part, getting the access token
         tok = netflix.user.getAccessToken( MY_USER['request'] )
         if(VERBOSE_USER_LOG):
