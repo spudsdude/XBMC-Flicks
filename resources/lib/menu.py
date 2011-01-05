@@ -11,8 +11,12 @@ MODE1a = 11
 MODE1b = 12
 MODE2 = 20
 MODE3 = 30
+MODE3a = 31
+MODE3b = 32
 MODE4 = 40
 MODE5 = 50
+MODE5a = 51
+MODE5b = 52
 MODE6 = 60
 MODE6a = 61
 MODE6b = 62
@@ -94,8 +98,12 @@ SUBMENU1a = "Instant Queue: Movies"
 SUBMENU1b = "Instant Queue: TV"
 SUBMENU2 = "Recommended"
 SUBMENU3 = "All New Arrivals"
+SUBMENU3a = "All New Arrivals: Movies"
+SUBMENU3b = "All New Arrivals: TV"
 SUBMENU4 = "Search..."
 SUBMENU5 = "Top 25 New Arrivals"
+SUBMENU5a = "Top 25 New Arrivals: Movies"
+SUBMENU5b = "Top 25 New Arrivals: TV"
 SUBMENU6 = "By Genre"
 SUBMENU6a = "Action & Adventure"
 SUBMENU6b = "Children & Family"
@@ -201,21 +209,27 @@ def addDirectoryItem(name, isFolder=True, parameters={}, thumbnail=None):
 # UI builder functions
 def show_root_menu():
    addDirectoryItem(name=SUBMENU0iw, parameters={ PARAMETER_KEY_MODE:MODE0iw }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_watch_main.png")
-   addDirectoryItem(name=SUBMENU0d, parameters={ PARAMETER_KEY_MODE:MODE0d }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_by_mail.png")
+   if(not IN_CANADA):
+      addDirectoryItem(name=SUBMENU0d, parameters={ PARAMETER_KEY_MODE:MODE0d }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_by_mail.png")
    addDirectoryItem(name=SUBMENUR, parameters={ PARAMETER_KEY_MODE:MODER }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/rental_history.png")
    xbmcplugin.endOfDirectory(handle=handle, succeeded=True)   
 
 def show_instant_menu():
-   addDirectoryItem(name=SUBMENU1, parameters={ PARAMETER_KEY_MODE:MODE1 }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_queue_all.png")
-   addDirectoryItem(name=SUBMENU1a, parameters={ PARAMETER_KEY_MODE:MODE1a }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_queue_movies.png")
-   addDirectoryItem(name=SUBMENU1b, parameters={ PARAMETER_KEY_MODE:MODE1b }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_queue_tv.png")
+   if(not IN_CANADA):
+      addDirectoryItem(name=SUBMENU1, parameters={ PARAMETER_KEY_MODE:MODE1 }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_queue_all.png")
+      addDirectoryItem(name=SUBMENU1a, parameters={ PARAMETER_KEY_MODE:MODE1a }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_queue_movies.png")
+      addDirectoryItem(name=SUBMENU1b, parameters={ PARAMETER_KEY_MODE:MODE1b }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_queue_tv.png")
 
    addDirectoryItem(name=SUBMENU2, parameters={ PARAMETER_KEY_MODE:MODE2 }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_watch_recommended.png")
 
-   if(not IN_CANADA):
-      addDirectoryItem(name=SUBMENU5, parameters={ PARAMETER_KEY_MODE:MODE5 }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_new_top25.png")
-      addDirectoryItem(name=SUBMENU3, parameters={ PARAMETER_KEY_MODE:MODE3 }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_new_all.png")
+   addDirectoryItem(name=SUBMENU5, parameters={ PARAMETER_KEY_MODE:MODE5 }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_new_top25.png")
+   addDirectoryItem(name=SUBMENU5a, parameters={ PARAMETER_KEY_MODE:MODE5a }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_new_top25_movies.png")
+   addDirectoryItem(name=SUBMENU5b, parameters={ PARAMETER_KEY_MODE:MODE5b }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_new_top25_tv.png")
 
+   addDirectoryItem(name=SUBMENU3, parameters={ PARAMETER_KEY_MODE:MODE3 }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_new_all.png")
+   addDirectoryItem(name=SUBMENU3a, parameters={ PARAMETER_KEY_MODE:MODE3a }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_new_all_movies.png")
+   addDirectoryItem(name=SUBMENU3b, parameters={ PARAMETER_KEY_MODE:MODE3b }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_new_all_tv.png")
+      
    addDirectoryItem(name=SUBMENU4, parameters={ PARAMETER_KEY_MODE:MODE4 }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_search.png")
    #addDirectoryItem(name=SUBMENU6, parameters={ PARAMETER_KEY_MODE:MODE6 }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_watch_top25s.png")
    xbmcplugin.endOfDirectory(handle=handle, succeeded=True)
@@ -342,9 +356,24 @@ elif mode == MODE1a:
 elif mode == MODE1b:
    getInstantQueue(2)
 elif mode == MODE2:
-    getRecommendedQueue()
+   getRecommendedQueue()
+
 elif mode == MODE3:
-    getNewToWatchInstant()
+   if(not IN_CANADA):
+      getNewToWatchInstant("0")
+   else:
+      getNewToWatchInstantCA("0")
+elif mode == MODE3a:
+   if(not IN_CANADA):
+      getNewToWatchInstant("1")
+   else:
+      getNewToWatchInstantCA("1")
+elif mode == MODE3b:
+   if(not IN_CANADA):
+      getNewToWatchInstant("2")
+   else:
+      getNewToWatchInstantCA("2")
+
 elif mode == MODE4:
     keyboard = xbmc.Keyboard()
     keyboard.doModal()
@@ -354,9 +383,23 @@ elif mode == MODE4:
       doSearch(arg, "instant", True)
     else:
       print "user canceled"
-elif mode == MODE5:
-   getNewToWatchInstantTopX()
 
+elif mode == MODE5:
+   if(not IN_CANADA):
+      getNewToWatchInstantTopX("0")
+   else:
+      getNewToWatchInstantCATopX("0")
+elif mode == MODE5a:
+   if(not IN_CANADA):
+      getNewToWatchInstantTopX("1")
+   else:
+      getNewToWatchInstantCATopX("1")
+elif mode == MODE5b:
+   if(not IN_CANADA):
+      getNewToWatchInstantTopX("2")
+   else:
+      getNewToWatchInstantCATopX("2")
+     
 elif mode == MODE6:
    ok = show_SUBMENU6()
 elif mode == MODE6a:
