@@ -138,6 +138,8 @@ class OAuthToken(object):
         """ Returns a token from something like:
         oauth_token_secret=xxx&oauth_token=xxx
         """
+        print "Token result was: " + str(s)
+        print "If the timestamp shows invalid, your computers date/time is off, sync it to an NTP server or fix it by setting the correct values"
         params = cgi.parse_qs(s, keep_blank_values=False)
         key = params['oauth_token'][0]
         secret = params['oauth_token_secret'][0]
