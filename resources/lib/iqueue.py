@@ -818,12 +818,18 @@ def convertRSSFeed(tData, intLimit, DiscQueue=None, strArg=None):
         if(str(strArg) == "0"):
             incMovie = True
             incTV = True
+            if(DEBUG):
+                print "No filter"
         elif(str(strArg) == "1"):
             incMovie = True
-            incTV = True
+            incTV = False
+            if(DEBUG):
+                print "Filtering for Movies"
         elif(str(strArg) == "2"):
-            incMovie = True
+            incMovie = False
             incTV = True
+            if(DEBUG):
+                print "Filtering for TV"
     else:
         incMovie = True
         incTV = True
@@ -841,26 +847,36 @@ def convertRSSFeed(tData, intLimit, DiscQueue=None, strArg=None):
 
         isMovie = False
         isTV = False
-        if re.search(r"(Season|Vol\.)", curX.Title, re.DOTALL | re.MULTILINE):
+        skip = True
+        if re.search(r"(Season|Vol\.|: Chapter)", curX.Title, re.DOTALL | re.MULTILINE):
             isTV = True
         else:
             isMovie = True
             
-        if ((isMovie & incMovie) or (isTV & incTV)):
+        if (isMovie & incMovie):
             intCount = intCount + 1
-
+            if (DEBUG):
+                print "triggered count on movies limiter:" + str(intCount) + " of " + str(intLimit)
+            skip = False
+        elif (isTV & incTV):
+            intCount = intCount + 1
+            if (DEBUG):
+                print "triggered count on tv limiter:" + str(intCount) + " of " + str(intLimit)
+            skip = False
         #print str(intCount)
         if(intCount > int(intLimit)):
             return
 
+        if(not skip):
         #add the link to the UI
-        if(DiscQueue):
-            addLinkDisc(curX.TitleShort,REAL_LINK_PATH + curX.ID + '_disc.html', curX)
-            writeDiscLinkFile(curX.ID, curX.Title, curX.WebURL)
-        else:
-            addLink(curX.TitleShort,REAL_LINK_PATH + curX.ID + '.html', curX)            
-            #write the link file
-            writeLinkFile(curX.ID, curX.Title)
+            if(DiscQueue):
+                addLinkDisc(curX.TitleShort,REAL_LINK_PATH + curX.ID + '_disc.html', curX)
+                writeDiscLinkFile(curX.ID, curX.Title, curX.WebURL)
+            else:
+                addLink(curX.TitleShort,REAL_LINK_PATH + curX.ID + '.html', curX)            
+                #write the link file
+                writeLinkFile(curX.ID, curX.Title)
+
 
 def getUserRentalHistory(netflix, user, strHistoryType, displayWhat=None):
     print "*** What's the rental history? ***"

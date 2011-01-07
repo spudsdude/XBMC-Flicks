@@ -183,6 +183,48 @@ handle = int(sys.argv[1])
 # settings
 global IN_CANADA
 IN_CANADA = getUserSettingCaUser(handle)
+global SGACTION
+global SGANIME
+global SGBLURAY
+global SGCHILDREN
+global SGCLASSICS
+global SGCOMEDY
+global SGDOCUMENTARY
+global SGDRAMA
+global SGFAITH
+global SGFOREIGN
+global SGGAY
+global SGHORROR
+global SGINDIE
+global SGMUSIC
+global SGROMANCE
+global SGSCIFI
+global SGSPECIALINTEREST
+global SGSPORTS
+global SGTV
+global SGTHRILLERS
+
+SGACTION = getUserSettingGenreDisplay(handle, "sgAction")
+SGANIME = getUserSettingGenreDisplay(handle, "sgAnime")
+SGBLURAY = getUserSettingGenreDisplay(handle, "sgBluray")
+SGCHILDREN = getUserSettingGenreDisplay(handle, "sgChildren")
+SGCLASSICS = getUserSettingGenreDisplay(handle, "sgClassics")
+SGCOMEDY = getUserSettingGenreDisplay(handle, "sgComedy")
+SGDOCUMENTARY = getUserSettingGenreDisplay(handle, "sgDocumentary")
+SGDRAMA = getUserSettingGenreDisplay(handle, "sgDrama")
+SGFAITH = getUserSettingGenreDisplay(handle, "sgFaith")
+SGFOREIGN = getUserSettingGenreDisplay(handle, "sgForeign")
+SGGAY = getUserSettingGenreDisplay(handle, "sgGay")
+SGHORROR = getUserSettingGenreDisplay(handle, "sgHorror")
+SGINDIE = getUserSettingGenreDisplay(handle, "sgIndie")
+SGMUSIC = getUserSettingGenreDisplay(handle, "sgMusic")
+SGROMANCE = getUserSettingGenreDisplay(handle, "sgRomance")
+SGSCIFI = getUserSettingGenreDisplay(handle, "sgSciFi")
+SGSPECIALINTEREST = getUserSettingGenreDisplay(handle, "sgSpecialInterest")
+SGSPORTS = getUserSettingGenreDisplay(handle, "sgSports")
+SGTV = getUserSettingGenreDisplay(handle, "sgTV")
+SGTHRILLERS = getUserSettingGenreDisplay(handle, "sgThrillers")
+
 
 # utility functions
 def parameters_string_to_dict(parameters):
@@ -310,26 +352,46 @@ def show_SUBMENU7():
    
 def show_SUBMENUD7():
    #add in the disc genre folders for the Top 25 items
-   addDirectoryItem(name=SUBMENUD7a, parameters={ PARAMETER_KEY_MODE:MODED7a }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_action2.png")
-   addDirectoryItem(name=SUBMENUD7b, parameters={ PARAMETER_KEY_MODE:MODED7b }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_anime2.png")
-   addDirectoryItem(name=SUBMENUD7c, parameters={ PARAMETER_KEY_MODE:MODED7c }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_bluray2.png")
-   addDirectoryItem(name=SUBMENUD7d, parameters={ PARAMETER_KEY_MODE:MODED7d }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_children2.png")
-   addDirectoryItem(name=SUBMENUD7e, parameters={ PARAMETER_KEY_MODE:MODED7e }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_classics2.png")
-   addDirectoryItem(name=SUBMENUD7f, parameters={ PARAMETER_KEY_MODE:MODED7f }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_comedy2.png")
-   addDirectoryItem(name=SUBMENUD7g, parameters={ PARAMETER_KEY_MODE:MODED7g }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_documentary2.png")
-   addDirectoryItem(name=SUBMENUD7h, parameters={ PARAMETER_KEY_MODE:MODED7h }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_drama2.png")
-   addDirectoryItem(name=SUBMENUD7i, parameters={ PARAMETER_KEY_MODE:MODED7i }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_faith2.png")
-   addDirectoryItem(name=SUBMENUD7j, parameters={ PARAMETER_KEY_MODE:MODED7j }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_foreign2.png")
-   addDirectoryItem(name=SUBMENUD7k, parameters={ PARAMETER_KEY_MODE:MODED7k }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_lesbian2.png")
-   addDirectoryItem(name=SUBMENUD7l, parameters={ PARAMETER_KEY_MODE:MODED7l }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_horror2.png")
-   addDirectoryItem(name=SUBMENUD7m, parameters={ PARAMETER_KEY_MODE:MODED7m }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_independent2.png")
-   addDirectoryItem(name=SUBMENUD7n, parameters={ PARAMETER_KEY_MODE:MODED7n }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_music2.png")
-   addDirectoryItem(name=SUBMENUD7o, parameters={ PARAMETER_KEY_MODE:MODED7o }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_romance2.png")
-   addDirectoryItem(name=SUBMENUD7p, parameters={ PARAMETER_KEY_MODE:MODED7p }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_scifi2.png")
-   addDirectoryItem(name=SUBMENUD7q, parameters={ PARAMETER_KEY_MODE:MODED7q }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_special_interest2.png")
-   addDirectoryItem(name=SUBMENUD7r, parameters={ PARAMETER_KEY_MODE:MODED7r }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_sports2.png")
-   addDirectoryItem(name=SUBMENUD7s, parameters={ PARAMETER_KEY_MODE:MODED7s }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_television2.png")
-   addDirectoryItem(name=SUBMENUD7t, parameters={ PARAMETER_KEY_MODE:MODED7t }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_thrillers2.png")
+   if SGACTION:
+      addDirectoryItem(name=SUBMENUD7a, parameters={ PARAMETER_KEY_MODE:MODED7a }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_action2.png")
+   if SGANIME:
+      addDirectoryItem(name=SUBMENUD7b, parameters={ PARAMETER_KEY_MODE:MODED7b }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_anime2.png")
+   if SGBLURAY:
+      addDirectoryItem(name=SUBMENUD7c, parameters={ PARAMETER_KEY_MODE:MODED7c }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_bluray2.png")
+   if SGCHILDREN:
+      addDirectoryItem(name=SUBMENUD7d, parameters={ PARAMETER_KEY_MODE:MODED7d }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_children2.png")
+   if SGCLASSICS:
+      addDirectoryItem(name=SUBMENUD7e, parameters={ PARAMETER_KEY_MODE:MODED7e }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_classics2.png")
+   if SGCOMEDY:
+      addDirectoryItem(name=SUBMENUD7f, parameters={ PARAMETER_KEY_MODE:MODED7f }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_comedy2.png")
+   if SGDOCUMENTARY:
+      addDirectoryItem(name=SUBMENUD7g, parameters={ PARAMETER_KEY_MODE:MODED7g }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_documentary2.png")
+   if SGDRAMA:
+      addDirectoryItem(name=SUBMENUD7h, parameters={ PARAMETER_KEY_MODE:MODED7h }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_drama2.png")
+   if SGFAITH:
+      addDirectoryItem(name=SUBMENUD7i, parameters={ PARAMETER_KEY_MODE:MODED7i }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_faith2.png")
+   if SGFOREIGN:
+      addDirectoryItem(name=SUBMENUD7j, parameters={ PARAMETER_KEY_MODE:MODED7j }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_foreign2.png")
+   if SGGAY:
+      addDirectoryItem(name=SUBMENUD7k, parameters={ PARAMETER_KEY_MODE:MODED7k }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_lesbian2.png")
+   if SGHORROR:
+      addDirectoryItem(name=SUBMENUD7l, parameters={ PARAMETER_KEY_MODE:MODED7l }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_horror2.png")
+   if SGINDIE:
+      addDirectoryItem(name=SUBMENUD7m, parameters={ PARAMETER_KEY_MODE:MODED7m }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_independent2.png")
+   if SGMUSIC:
+      addDirectoryItem(name=SUBMENUD7n, parameters={ PARAMETER_KEY_MODE:MODED7n }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_music2.png")
+   if SGROMANCE:
+      addDirectoryItem(name=SUBMENUD7o, parameters={ PARAMETER_KEY_MODE:MODED7o }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_romance2.png")
+   if SGSCIFI:
+      addDirectoryItem(name=SUBMENUD7p, parameters={ PARAMETER_KEY_MODE:MODED7p }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_scifi2.png")
+   if SGSPECIALINTEREST:
+      addDirectoryItem(name=SUBMENUD7q, parameters={ PARAMETER_KEY_MODE:MODED7q }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_special_interest2.png")
+   if SGSPORTS:
+      addDirectoryItem(name=SUBMENUD7r, parameters={ PARAMETER_KEY_MODE:MODED7r }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_sports2.png")
+   if SGTV:
+      addDirectoryItem(name=SUBMENUD7s, parameters={ PARAMETER_KEY_MODE:MODED7s }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_television2.png")
+   if SGTHRILLERS:
+      addDirectoryItem(name=SUBMENUD7t, parameters={ PARAMETER_KEY_MODE:MODED7t }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_top25_thrillers2.png")
    xbmcplugin.endOfDirectory(handle=handle, succeeded=True)
 
 # parameter values
