@@ -8,6 +8,7 @@ import webbrowser
 import os
 from settings import *
 from xinfo import *
+import simplejson
 
 # parameter keys
 PARAMETER_KEY_MODE = "mode"
@@ -129,7 +130,52 @@ def checkadvsettings():
         f = open(checkFile,'r+')
         f.write(data)
         f.close()
-    
+
+def addDirectoryItem(curX, isFolder=True, parameters={}, thumbnail=None):
+    ''' Add a list item to the XBMC UI.'''
+    if thumbnail:
+        li = xbmcgui.ListItem(curX.Title, thumbnailImage=thumbnail)
+    else:
+        li = xbmcgui.ListItem(curX.Title)
+    url = sys.argv[0] + '?' + urllib.urlencode(parameters)
+    li.setInfo( type="Video", infoLabels={ "Mpaa": curX.Mpaa, "TrackNumber": int(curX.Position), "Year": int(curX.Year), "OriginalTitle": curX.Title, "Title": curX.TitleShort, "Rating": float(curX.Rating)*2, "Duration": str(int(curX.Runtime)/60), "Director": curX.Directors, "Genre": curX.Genres, "CastAndRole": curX.Cast, "Plot": curX.Synop })
+    commands = []
+    argsRemove = str(curX.ID) + "delete"
+    argsAdd = str(curX.ID) + "post"
+    argsSimilar = str(curX.ID)
+    runnerRemove = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsRemove + ")"
+    runnerAdd = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsAdd + ")"
+    runnerSearch = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsSimilar + ")"
+
+    argsRemoveD = str(curX.ID) + "discdelete"
+    argsAddD = str(curX.ID) + "discpost"
+    argsAddTopD = str(curX.ID) + "disctoppost"
+    argsSimilarD = str(curX.ID)
+    runnerRemoveD = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsRemoveD + ")"
+    runnerAddD = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsAddD + ")"
+    runnerAddTopD = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsAddTopD + ")"
+    runnerSearchD = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsSimilarD + ")"
+
+    if(not curX.TvEpisode):
+        commands.append(( 'Netflix: Add to Disc Queue', runnerAddD, ))
+        commands.append(( 'Netflix: Remove From Disc Queue', runnerRemoveD, ))
+        commands.append(( 'Netflix: Add to Top of Disc Queue', runnerAddTopD, ))
+    else:
+        commands.append(( 'Netflix: Add Season to Disc Queue', runnerAddD, ))
+        commands.append(( 'Netflix: Remove Season From Disc Queue', runnerRemoveD, ))
+        commands.append(( 'Netflix: Add to Top of Disc Queue', runnerAddTopD, ))
+
+    if(not curX.TvEpisode):
+        commands.append(( 'Netflix: Add to Instant Queue', runnerAdd, ))
+        commands.append(( 'Netflix: Remove From Instant Queue', runnerRemove, ))
+        #commands.append(( 'Netflix: Find Similar', runnerSearch, ))
+    else:
+        commands.append(( 'Netflix: Add Entire Season to Instant Queue', runnerAdd, ))
+        commands.append(( 'Netflix: Remove Entire Season From Instant Queue', runnerRemove, ))
+
+    li.addContextMenuItems( commands )
+    return xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url, listitem=li, isFolder=isFolder)
+
 def addLink(name,url,curX,rootID=None):
     ok=True
     liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=curX.Poster)
@@ -171,28 +217,28 @@ def addLinkDisc(name,url,curX,rootID=None):
 
     commands = []
     url = REAL_LINK_PATH + curX.ID + '_disc.html'
-    argsRemove = str(curX.ID) + "discdelete"
-    argsAdd = str(curX.ID) + "discpost"
-    argsAddTop = str(curX.ID) + "disctoppost"
+    argsRemoveD = str(curX.ID) + "discdelete"
+    argsAddD = str(curX.ID) + "discpost"
+    argsAddTopD = str(curX.ID) + "disctoppost"
     
-    argsSimilar = str(curX.ID)
+    argsSimilarD = str(curX.ID)
     if rootID:
-        argsRemove = str(rootID) + "discdelete"
-        argsAdd = str(rootID) + "discpost"
-        argsSimilar = str(rootID)
-    runnerRemove = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsRemove + ")"
-    runnerAdd = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsAdd + ")"
-    runnerAddTop = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsAddTop + ")"
-    runnerSearch = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsSimilar + ")"
+        argsRemoveD = str(rootID) + "discdelete"
+        argsAddD = str(rootID) + "discpost"
+        argsSimilarD = str(rootID)
+    runnerRemoveD = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsRemoveD + ")"
+    runnerAddD = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsAddD + ")"
+    runnerAddTopD = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsAddTopD + ")"
+    runnerSearchD = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsSimilarD + ")"
 
     if(not curX.TvEpisode):
-        commands.append(( 'Netflix: Add to Disc Queue', runnerAdd, ))
-        commands.append(( 'Netflix: Remove From Disc Queue', runnerRemove, ))
-        commands.append(( 'Netflix: Add to Top of Disc Queue', runnerAddTop, ))
+        commands.append(( 'Netflix: Add to Disc Queue', runnerAddD, ))
+        commands.append(( 'Netflix: Remove From Disc Queue', runnerRemoveD, ))
+        commands.append(( 'Netflix: Add to Top of Disc Queue', runnerAddTopD, ))
     else:
-        commands.append(( 'Netflix: Add Season to Disc Queue', runnerAdd, ))
-        commands.append(( 'Netflix: Remove Season From Disc Queue', runnerRemove, ))
-        commands.append(( 'Netflix: Add to Top of Disc Queue', runnerAddTop, ))
+        commands.append(( 'Netflix: Add Season to Disc Queue', runnerAddD, ))
+        commands.append(( 'Netflix: Remove Season From Disc Queue', runnerRemoveD, ))
+        commands.append(( 'Netflix: Add to Top of Disc Queue', runnerAddTopD, ))
 
     liz.addContextMenuItems( commands )
     whichHandler = sys.argv[1]
@@ -299,7 +345,7 @@ def availableTimeRemaining(expires):
     except:
         return ""
 
-def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, intDisplayWhat=None):
+def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, intDisplayWhat, forceExpand=None):
     #if display what = 0, will only show instant queue items
     #if display what = 1, will only display movies
     #if display what = 2, will only display tv shows
@@ -354,9 +400,9 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
         curX.Mpaa = matchMpaa.group(1).strip()
     else:
         #matching by maturity_level
-        match = re.search(r"maturity_level': (\d{1,4}),", curQueueItem, re.DOTALL | re.MULTILINE)
-        if match:
-            iRating = int(match.group(1).strip())
+        matchRating = re.search(r"maturity_level': (\d{1,4}),", curQueueItem, re.DOTALL | re.MULTILINE)
+        if matchRating:
+            iRating = int(matchRating.group(1).strip())
             curX.MaturityLevel = iRating
             if (iRating == 0):
                 curX.Mpaa = "0 Rating"
@@ -385,13 +431,42 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
             elif (iRating == 1000):
                 curX.Mpaa = "UR (Mature)"
             else:
-                curX.Mpaa = match.group(1)
-
+                curX.Mpaa = matchRating.group(1)
+        else:
+            matchRating2 = re.search(r'"Synopsis": "(.*?)", "AverageRating": (.{1,5}), "ReleaseYear": (\d{4}), "Url": ".*?", "Runtime": (\d{1,10}), "Rating": "(.*?)"', curQueueItem)
+            if matchRating2:
+                curX.Mpaa = matchRating2.group(5).strip()
+                if curX.Mpaa == "TV-Y":
+                    iRating = 10
+                elif curX.Mpaa == "TV-Y7":
+                    iRating = 20
+                elif curX.Mpaa == "G":
+                    iRating = 40
+                elif curX.Mpaa == "TV-G": 
+                    iRating = 50
+                elif curX.Mpaa == "PG":
+                    iRating = 60
+                elif curX.Mpaa == "NR (Kids)":
+                    iRating = 75
+                elif curX.Mpaa == "PG-13":
+                    iRating = 80
+                elif curX.Mpaa == "TV-14":
+                    iRating = 90
+                elif curX.Mpaa == "R":
+                    iRating = 100
+                elif curX.Mpaa == "TV-MA":
+                    iRating = 110
+                elif curX.Mpaa == "NR (Mature)":
+                    iRating = 130
+                elif curX.Mpaa == "UR (Mature)":
+                    iRating = 1000
+                else:
+                    iRating = 1000
     #check rating against max rating
     if (not int(iRating) <= int(MAX_RATING)):
         print "Item failed rating check, not adding.."
         return curX
-    
+
     #genre
     matchGenre = re.search(r"genres': \[?{.*?u'name': u'(.*?)'}", curQueueItem, re.DOTALL | re.MULTILINE)
     if matchGenre:
@@ -401,15 +476,62 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
     matchYear = re.search(r'[\'"]release_year[\'"]: u{0,1}[\'"](\d{4})[\'"]', curQueueItem)
     if matchYear:
         curX.Year = matchYear.group(1).strip()
-
+    else:
+        matchYear2 = re.search(r'"ReleaseYear": (\d{4})', curQueueItem, re.IGNORECASE)
+        if matchYear2:
+            curX.Year = matchYear2.group(1).strip()
     if(not int(curX.Year) >= int(YEAR_LIMITER)):
+        print "couldn't parse year"
         return curX
 
+
+##    #formats available (for oData only)
+##    reobj = re.compile(r'"type": "NetflixCatalog.Model.InstantAvailability".*?}, "Available": (?P<iAvail>true|false|null), "AvailableFrom": (?P<iAvailFrom>.*?), "AvailableTo": (?P<iAvailTil>.*?), "HighDefinitionAvailable": (.*?), "Runtime": (.*?), "Rating": null.*?}, "Dvd": {.*?"__metadata": {.*?"type": "NetflixCatalog.Model.DeliveryFormatAvailability".*?}, "Available": (?P<dAvail>true|false|null), "AvailableFrom": (?P<dAvailFrom>.*?), "AvailableTo": (?P<dAvailTil>.*?), "Runtime": .{1,20}, "Rating": ".{1,20}".*?}, "BluRay": {.*?"__metadata": {.*?"type": "NetflixCatalog.Model.DeliveryFormatAvailability".*?}, "Available": (?P<bAvail>true|false|null), "AvailableFrom": (?P<bAvailFrom>.*?), "AvailableTo": (?P<bAvailTil>.*?), "Runtime": (.*?), "Rating": null.*?},', re.DOTALL | re.IGNORECASE | re.MULTILINE)
+##    matchodataformats = reobj.search(curQueueItem)
+##    if matchodataformats:
+##        print "----------------------------------"
+##        print " matched formats for oData "
+##        print " iAvail: " + str(matchodataformats.group(1).strip())
+##        curX.oData = True
+##        if(matchodataformats.group(1).strip() == "true"):
+##            curX.iAvail = True
+##        if(matchodataformats.group(1).strip() == "True"):
+##            curX.iAvail = True
+##        else:
+##            curX.iAvail = False
+##        curX.iAvailFrom = matchodataformats.group("iAvailFrom")
+##        curX.iAvailTil = matchodataformats.group("iAvailTil")
+##        if(matchodataformats.group("dAvail") == "true"):
+##            curX.dAvail = True
+##        if(matchodataformats.group("dAvail") == "True"):
+##            curX.dAvail = True
+##        else:
+##            curX.dAvail = False
+##        curX.dAvailFrom = matchodataformats.group("dAvailFrom")
+##        curX.dAvailTil = matchodataformats.group("dAvailTil")
+##        if(matchodataformats.group("bAvail") == "true"):
+##            curX.bAvail = True
+##        if(matchodataformats.group("bAvail") == "True"):
+##            curX.bAvail = True
+##        else:
+##            curX.bAvail = False
+##        curX.bAvailFrom = matchodataformats.group("bAvailFrom")
+##        curX.bAvailTil = matchodataformats.group("bAvailTil")
+##    else:
+##        curX.oData = False
+##    print "oData format check results"
+##    print "Instant Avail: " + str(curX.iAvail)
+##    print "Disc Avail: " + str(curX.dAvail)
+##    print "Bluray Avail: " + str(curX.bAvail)
+    
     #title
     matchTitle = re.search(r'[\'"]title[\'"]: {.*?[\'"]regular[\'"]: u{0,1}[\'"](.*?)[\'"].*?},', curQueueItem, re.DOTALL | re.MULTILINE)
     if matchTitle:
         curX.Title = matchTitle.group(1).strip()
-
+    else:
+        matchTitle2 = re.search('"ShortName": "(.*?)"',curQueueItem, re.DOTALL | re.MULTILINE)
+        if matchTitle2:
+            curX.Title = matchTitle2.group(1).strip()
     #position
     matchPosition = re.search(r'[\'"]position[\'"]: u{0,1}[\'"](\d{1,6})[\'"], ', curQueueItem, re.DOTALL | re.MULTILINE)
     if matchPosition:
@@ -428,7 +550,11 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
     matchAvailUntil = re.search(r"available_until': (\d{8,15})", curQueueItem, re.DOTALL | re.MULTILINE)
     if matchAvailUntil:
         curX.AvailableUntil = matchAvailUntil.group(1)
-
+    else:
+        #"NetflixCatalog.Model.InstantAvailability".*?}, "Available": (?P<iAvail>true|false|null), "AvailableFrom": (?P<iAvailFrom>.*?), "AvailableTo": (?P<iAvailTil>.*?)
+        matchAvailUntil = re.search(r'"NetflixCatalog.Model.InstantAvailability".*?}, "Available": (?P<iAvail>true|false|null), "AvailableFrom": (?P<iAvailFrom>.*?), "AvailableTo": ".*?\((?P<availUntil>\d*)\)', curQueueItem, re.DOTALL | re.IGNORECASE | re.MULTILINE)
+        if matchAvailUntil:
+            curX.AvailableUntil = matchAvailUntil.group(3)
     matchWebURL = re.search(r"u'web_page': u'(.*?)'", curQueueItem)
     if matchWebURL:
         curX.WebURL = matchWebURL.group(1)
@@ -437,8 +563,12 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
     matchTitleShort = re.search('[\'"]title[\'"]: {.*?[\'"](title_)?short[\'"]: u{0,1}[\'"](.*?)[\'"].*?},', curQueueItem, re.DOTALL | re.MULTILINE)
     if matchTitleShort:
         curX.TitleShort = matchTitleShort.group(2).strip()
-
+    else:
+        matchTitleShort2 = re.search('"ShortName": "(.*?)"',curQueueItem, re.DOTALL | re.MULTILINE)
+        if matchTitleShort2:
+            curX.TitleShort = matchTitleShort2.group(1).strip()
     firstM = True
+    
     #director
     for matchDir in re.finditer(r"directors': \[(.*?)\]", curQueueItem):
         firstM = True
@@ -460,28 +590,61 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
         curX.Rating = curX.Rating.replace("}", "")
         curX.Rating = curX.Rating.replace("]", "")
         curX.Rating = curX.Rating.strip()
-   
+    else:
+        matchRating2 = re.search(r'"Synopsis": "(.*?)", "AverageRating": (.{1,5}), "ReleaseYear": (\d{4}),', curQueueItem)
+        if matchRating2:
+            curX.Rating = matchRating2.group(2)
+            curX.Rating = curX.Rating.replace("}", "")
+            curX.Rating = curX.Rating.replace("]", "")
+            curX.Rating = curX.Rating.strip()
+    print "attempting to get id next"   
     #id and fullid
     matchIds = re.search(r"u'web_page': u'http://.*?/(\d{1,15})'", curQueueItem, re.DOTALL | re.MULTILINE)
     if matchIds:
         curX.ID = matchIds.group(1).strip()
+        print "id regex: matched matchIds"
     else:
+        print "didnt' match matchIds"
         match = re.search(r"u'\d{1,3}pix_w': u'http://.*?.nflximg.com/US/boxshots/(small|tiny|large|ghd|small_epx|ghd_epx|large_epx|88_epx|tiny_epx)/(\d{1,15}).jpg'", curQueueItem, re.DOTALL | re.MULTILINE)
         if match:
+            print "id regex: matched match"
             curX.ID = match.group(2).strip()
         else:
+            print "didn't match match"
             matchIds2 = re.search(r'id[\'"]: u{0,1}[\'"](?P<fullId>.*?/(?P<idNumber>\d{1,15}))[\'"].*?', curQueueItem, re.DOTALL | re.MULTILINE)
             if matchIds2:
+                print "id regex: matched matchIds2"
                 curX.FullId = matchIds2.group(1)
-                curX.id = matchIds2.group(2)
+                curX.ID = matchIds2.group(2)
             else:
-                print "CRITICAL ERROR: Unable to parse ID of item. Stopping parse..."
-                exit
+                print "didn't match matchIds2"
+                matchIds3 = re.search(r'"media_src": "http://.*?.nflximg.com/us/boxshots/(small|tiny|large|ghd|small_epx|ghd_epx|large_epx|88_epx|tiny_epx)/(\d{1,15}).jpg"', curQueueItem, re.DOTALL | re.IGNORECASE | re.MULTILINE)
+                if matchIds3:
+                    print "id regex: matched matchIds3"
+                    curX.FullId = matchIds3.group(1)
+                    curX.ID = matchIds3.group(2)
+                else:
+                    print "CRITICAL ERROR: Unable to parse ID of item. Stopping parse..."
+                    return curX
+    print "got id of : " + curX.ID
+    #show info
+    curX.TvShowSeriesID = curX.ID
+    matchShowData = re.search(r"http://api.netflix.*?/catalog/titles/series/(\d*)/seasons/(\d*)", curQueueItem, re.DOTALL | re.IGNORECASE | re.MULTILINE)
+    if (matchShowData):
+        curX.TvShow = True
+        curX.TvShowSeriesID = matchShowData.group(1).strip()
+        print curX.TvShowSeriesID
+        curX.TvShowSeasonID = matchShowData.group(2).strip()
+        print curX.TvShowSeasonID
+
     #synop
     match = re.search(r"u'synopsis': {.*?u'regular': u'(.*?)}", curQueueItem, re.DOTALL | re.MULTILINE)
     if match:
         curX.Synop = match.group(1)
-
+    else:
+        matchSynop = re.search(r'"Synopsis": "(.*?)", "AverageRating": (.{1,5}), "ReleaseYear": (\d{4}),', curQueueItem, re.DOTALL | re.IGNORECASE | re.MULTILINE)
+        if matchSynop:
+            curX.Synop = matchSynop.group(1)
     #cleanup synop
     try:
         strSynopsis = curX.Synop
@@ -568,12 +731,20 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
         return curX
 
     #if we are here, it's a tvshow, see if we should expand them automatically (user setting)
-    if(not AUTO_EXPAND_EPISODES):
-        addLink(curX.TitleShort,REAL_LINK_PATH + curX.TitleShortLink + '.html', curX)
-        #write the link file
-        writeLinkFile(curX.TitleShortLink, curX.Title)
-        return curX
+    if(not forceExpand):
+        if(not AUTO_EXPAND_EPISODES):
+            #it's a tvshow and we are not autoexpanding the episodes, we want to add the item as a folder with it's list of episodes
+            boolDiscQueue = False
+            if(discQueue):
+                boolDiscQueue = True
+            addDirectoryItem(curX, parameters={ PARAMETER_KEY_MODE:"tvExpand" + "shId" + curX.TvShowSeriesID + "seId" + curX.TvShowSeasonID + str(boolDiscQueue) }, isFolder=True, thumbnail=curX.Poster)
 
+            #add the link to UI
+            #addLink(curX.TitleShort,REAL_LINK_PATH + curX.TitleShortLink + '.html', curX)
+            #write the link file
+            #writeLinkFile(curX.TitleShortLink, curX.Title)
+            return curX
+        
     matchAllEpData = re.search(r"(?sm){(u'episode_short'.*?)}", curQueueItem, re.DOTALL | re.MULTILINE)
     if matchAllEpData:
         data = matchAllEpData.group(1)
@@ -581,9 +752,11 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
         data = ""
     
     #addDir(curX.TitleShort,'',999,curX.Poster,data)
-      
+
+    foundMatch = False
     #if still processing, we want to auto-expand the episode lets add the folder, and then parse the episodes into that folder
     for matchAllEp in re.finditer(r"(?sm){(u'episode_short'.*?)}", curQueueItem):
+        foundMatch = True
         reobj = re.compile('u\'episode_short\': u[\'"](?P<shorttitle>.*?)[\'"], u\'sequence\': (?P<eNum>\\d{1,3}), u\'id\': u\'(?P<link>.*?)\', u\'title\': u\'(?P<title>.*)}', re.DOTALL)
         matchAllEpisodes = reobj.search(matchAllEp.group())
         if matchAllEpisodes:
@@ -603,9 +776,16 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
             curXe.Synop = curXe.Title + "\n\n" + curX.Synop
             curXe.TvEpisodeEpisodeNum = matchAllEpisodes.group("eNum")
             if re.search(r"Episode", curQueueItem, re.DOTALL | re.MULTILINE):
-                curXe.TitleShort = curX.TitleShort + " " + matchAllEpisodes.group("shorttitle")
+                if(not forceExpand):
+                    curXe.TitleShort = curX.TitleShort + " " + matchAllEpisodes.group("shorttitle")
+                else:
+                    curXe.TitleShort = matchAllEpisodes.group("shorttitle")
             else:
-                curXe.TitleShort = curX.TitleShort + " " + "Episode: " + curXe.TvEpisodeEpisodeNum + " " + matchAllEpisodes.group("shorttitle")
+                if(not forceExpand):
+                    curXe.TitleShort = curX.TitleShort + " " + "Episode: " + curXe.TvEpisodeEpisodeNum + " " + matchAllEpisodes.group("shorttitle")
+                else:
+                    curXe.TitleShort = "Episode: " + curXe.TvEpisodeEpisodeNum + " - " + matchAllEpisodes.group("shorttitle")
+
             curXe.TvShow = True
             curXe.TvShowLink = curX.TvShowLink
             curXe.TvShowSeasonID = curX.TvShowSeasonID
@@ -632,7 +812,11 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
             else:
                 #don't add it
                 print "not adding episode, couldn't parse id"
-
+    if (not foundMatch):
+        #this is to cover those tv shows that are just a single episode
+        addLink(curX.TitleShort,REAL_LINK_PATH + curX.TitleShortLink + '.html', curX)
+        #write the link file
+        writeLinkFile(curX.TitleShortLink, curX.Title)
     #xbmcplugin.endOfDirectory(int(sys.argv[1]))
     return curX
 
@@ -677,7 +861,7 @@ def getUserAtHomeItems(netflix,user):
         curQueueItem = match.group(1)
 
         #now parse out each item
-        curX = getMovieDataFromFeed(curX, curQueueItem, False, netflix, False)
+        curX = getMovieDataFromFeed(curX, curQueueItem, False, netflix, False, False)
 
 
 def getUserInstantQueue(netflix,user, displayWhat):
@@ -737,7 +921,7 @@ def getUserRecommendedQueue(netflix,user):
         if(DEBUG):
             print "current queue item from regex is: " + str(curQueueItem)
         #now parse out each item
-        curX = getMovieDataFromFeed(curX, curQueueItem, False, netflixClient, True)
+        curX = getMovieDataFromFeed(curX, curQueueItem, False, netflixClient, True, False)
     time.sleep(1)
     xbmcplugin.setContent(int(sys.argv[1]),'Movies')
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
@@ -940,6 +1124,28 @@ def initApp():
     global IMAGE_FOLDER
     global USERINFO_FOLDER
     global XBMCPROFILE
+
+    #genre settings
+    global SGACTION
+    global SGANIME
+    global SGBLURAY
+    global SGCHILDREN
+    global SGCLASSICS
+    global SGCOMEDY
+    global SGDOCUMENTARY
+    global SGDRAMA
+    global SGFAITH
+    global SGFOREIGN
+    global SGGAY
+    global SGHORROR
+    global SGINDIE
+    global SGMUSIC
+    global SGROMANCE
+    global SGSCIFI
+    global SGSPECIALINTEREST
+    global SGSPORTS
+    global SGTV
+    global SGTHRILLERS
     
     arg = int(sys.argv[1])
     APP_NAME = 'xbmcflix'
@@ -962,6 +1168,27 @@ def initApp():
     SHOW_RATING_IN_TITLE = getUserSettingShowRatingInTitle(arg)
     YEAR_LIMITER = getUserSettingYearLimit(arg)
 
+    SGACTION = getUserSettingGenreDisplay(arg, "sgAction")
+    SGANIME = getUserSettingGenreDisplay(arg, "sgAnime")
+    SGBLURAY = getUserSettingGenreDisplay(arg, "sgBluray")
+    SGCHILDREN = getUserSettingGenreDisplay(arg, "sgChildren")
+    SGCLASSICS = getUserSettingGenreDisplay(arg, "sgClassics")
+    SGCOMEDY = getUserSettingGenreDisplay(arg, "sgComedy")
+    SGDOCUMENTARY = getUserSettingGenreDisplay(arg, "sgDocumentary")
+    SGDRAMA = getUserSettingGenreDisplay(arg, "sgDrama")
+    SGFAITH = getUserSettingGenreDisplay(arg, "sgFaith")
+    SGFOREIGN = getUserSettingGenreDisplay(arg, "sgForeign")
+    SGGAY = getUserSettingGenreDisplay(arg, "sgGay")
+    SGHORROR = getUserSettingGenreDisplay(arg, "sgHorror")
+    SGINDIE = getUserSettingGenreDisplay(arg, "sgIndie")
+    SGMUSIC = getUserSettingGenreDisplay(arg, "sgMusic")
+    SGROMANCE = getUserSettingGenreDisplay(arg, "sgRomance")
+    SGSCIFI = getUserSettingGenreDisplay(arg, "sgSciFi")
+    SGSPECIALINTEREST = getUserSettingGenreDisplay(arg, "sgSpecialInterest")
+    SGSPORTS = getUserSettingGenreDisplay(arg, "sgSports")
+    SGTV = getUserSettingGenreDisplay(arg, "sgTV")
+    SGTHRILLERS = getUserSettingGenreDisplay(arg, "sgThrillers")
+    print "ACTION SET TO: " + str(SGACTION)
     #get addon info
     __settings__ = xbmcaddon.Addon(id='plugin.video.xbmcflicks')
     ROOT_FOLDER = 'special://home/addons/plugin.video.xbmcflicks/'
@@ -1027,6 +1254,12 @@ def getInstantQueue(displayWhat=None):
     if(not user):
         exit
     time.sleep(1)
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_LABEL )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_DATE )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_RUNTIME )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_YEAR )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_GENRE )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_MPAA_RATING )
     xbmcplugin.setContent(int(sys.argv[1]),'Movies')
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
@@ -1036,6 +1269,12 @@ def getRecommendedQueue():
         exit
     getUserRecommendedQueue(netflixClient, user)
     time.sleep(1)
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_LABEL )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_DATE )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_RUNTIME )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_YEAR )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_GENRE )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_MPAA_RATING )
     xbmcplugin.setContent(int(sys.argv[1]),'Movies')
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
@@ -1046,6 +1285,7 @@ def getNewToWatchInstantCA(strArg):
     curUrl = "http://www.netflix.ca/NewWatchInstantlyRSS"
     convertRSSFeed(getUrlString(curUrl), 500, None, strArg)
     time.sleep(1)
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_LABEL )
     xbmcplugin.setContent(int(sys.argv[1]),'Movies')
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
@@ -1056,6 +1296,7 @@ def getNewToWatchInstantCATopX(strArg):
     curUrl = "http://www.netflix.ca/NewWatchInstantlyRSS"
     convertRSSFeed(getUrlString(curUrl), 25, None, strArg)
     time.sleep(1)
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_LABEL )
     xbmcplugin.setContent(int(sys.argv[1]),'Movies')
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
@@ -1066,6 +1307,7 @@ def getNewToWatchInstant(strArg):
     curUrl = "http://www.netflix.com/NewWatchInstantlyRSS"
     convertRSSFeed(getUrlString(curUrl), 500, None, strArg)
     time.sleep(1)
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_LABEL )
     xbmcplugin.setContent(int(sys.argv[1]),'Movies')
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
@@ -1076,6 +1318,7 @@ def getNewToWatchInstantTopX(strArg):
     curUrl = "http://www.netflix.com/NewWatchInstantlyRSS"
     convertRSSFeed(getUrlString(curUrl), 25, None, strArg)
     time.sleep(1)
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_LABEL )
     xbmcplugin.setContent(int(sys.argv[1]),'Movies')
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
@@ -1085,12 +1328,228 @@ def getTop25Feed(strArg):
     convertRSSFeed(getUrlString(curUrl), 25)
     time.sleep(1)
     xbmcplugin.setContent(int(sys.argv[1]),'Movies')
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_LABEL )
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 def getTop25FeedD(strArg):
     initApp()
     curUrl = "http://rss.netflix.com/Top25RSS?gid=" + str(strArg)
     convertRSSFeed(getUrlString(curUrl), 25, True)
+    time.sleep(1)
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_LABEL )
+    xbmcplugin.setContent(int(sys.argv[1]),'Movies')
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
+
+
+def escape(s):
+    """Escape a URL including any /."""
+    return urllib.quote(s, safe='~')
+
+def _utf8_str(s):
+    """Convert unicode to utf-8."""
+    if isinstance(s, unicode):
+        return s.encode("utf-8")
+    else:
+        return str(s)
+
+def normalize_params(params):
+    # Escape key values before sorting.
+    key_values = [(escape(_utf8_str(k)), escape(_utf8_str(v))) \
+        for k,v in params.items()]
+    # Combine key value pairs into a string.
+    return '?' + '&'.join(['$%s=%s' % (k, v) for k, v in key_values])
+
+def checkGenre(strGenreName):
+    result = False
+    if SGGAY:
+        if re.search(r"(lesb|gay|sex|erotic|experimental)", strGenreName, re.IGNORECASE):
+            return True
+    else:
+        if re.search(r"(lesb|gay|sex|erotic|experimental)", strGenreName, re.IGNORECASE):
+            return False
+
+    if SGACTION:
+        if re.search(r"(action|adventures|mobster|heist|swashbucklers|westerns|epics|blockbusters)", strGenreName, re.IGNORECASE):
+            return True
+    if SGANIME:
+        if re.search(r"(anime|animation)", strGenreName, re.IGNORECASE):
+            return True
+    if SGBLURAY:
+        if re.search(r"blu", strGenreName, re.IGNORECASE):
+            return True
+    if SGCHILDREN:
+        if re.search(r"(book characters|animal tales|dinosaurs|nickelodeon|children|family|ages 0-2|ages 2-4|ages 5-7|ages 8-10|ages 11-12|cartoon|comic|kids|disney|inspirational|magic)", strGenreName, re.IGNORECASE):
+            return True
+    if SGCLASSICS:
+        if re.search(r"(classic|silent)", strGenreName, re.IGNORECASE):
+            return True
+    if SGCOMEDY:
+        if re.search(r"(mock|spoof|screwball|stand-up|saturday night live|slapstick|comedy|comedies|humor)", strGenreName, re.IGNORECASE):
+            return True
+    if SGDOCUMENTARY:
+        if re.search(r"document", strGenreName, re.IGNORECASE):
+            return True
+    if SGDRAMA:
+        if re.search(r"suspense|drama|mystery|underdogs|epics|blockbusters", strGenreName, re.IGNORECASE):
+            return True
+    if SGFAITH:
+        if re.search(r"(religious|god|faith|pray|spirit)", strGenreName, re.IGNORECASE):
+            return True
+    if SGFOREIGN:
+        if re.search(r"(russia|china|foreign|scandinavia|asia|spain|thailand|united kingdom|brazil|australia|czech|africa|argentina|belgium|eastern|france|germany|greece|hong kong|india|iran|israel|italy|japan|judaica|korea|latin america|mexico|middle east|netherlands|philippines|poland)", strGenreName, re.IGNORECASE):
+            return True
+    if SGHORROR:
+        if re.search(r"(monsters|satanic|horror|scream|dead|slash|kill)", strGenreName, re.IGNORECASE):
+            return True
+    if SGINDIE:
+        if re.search(r"(indie|independent|IMAX|LOGO|film noir)", strGenreName, re.IGNORECASE):
+            return True
+    if SGMUSIC:
+        if re.search(r"(swing|reggae|singer|tunes|art|music|rock|rap|guitar|bass|jazz|r&b|folk|language|drum|guitar|banjo|karaoke|pop|concerts|piano|disco|country|new age|keyboard|opera)", strGenreName, re.IGNORECASE):
+            return True
+    if SGROMANCE:
+        if re.search(r"(shakespeare|tearjerk|romance)", strGenreName, re.IGNORECASE):
+            return True
+    if SGSCIFI:
+        if re.search(r"(sci-fi|scifi|science|fantasy)", strGenreName, re.IGNORECASE):
+            return True
+    if SGSPECIALINTEREST:
+        if re.search(r"(world|coming of age|theatrical|period pieces|sculpture|wine|social studies|sytle|beauty|voice lessons|technology|math|meditation|body|home|garden|pets|special|hobbies|math|food|heal|homespecial|blaxploitation|painting|poker|goth|computer|hobby|entertaining|preganancy|parent|career|bollywood|cooking)", strGenreName, re.IGNORECASE):
+            return True
+    if SGSPORTS:
+        if re.search(r"(skateboarding|climbing|soccer|skiing|self-def|snowboard|wrestling|yoga|tai chi|climbing|golf|stunts|tennis|fishing|pilates|fitness|car|hockey|biking|olympics|bmx|bodybuilding|car|kung fu|strength|sports|racing|baseball|basketball|boxing|aerobics|cycling|dance|boxing|karate|martial arts|extreme combat|glutes|football|workout|motorcycle|hunting|boat)", strGenreName, re.IGNORECASE):
+            return True
+    if SGTV:
+        if re.search(r"(tv|television)", strGenreName, re.IGNORECASE):
+            return True
+    if SGTHRILLERS:
+        if re.search(r"(thrill|werewolves|vampires|frankenstein|zombies|creature)", strGenreName, re.IGNORECASE):
+            return True
+    if(DEBUG):
+        print "Filtered out: " + strGenreName
+    return False
+
+def getInstantGenres():
+    initApp()
+    boolDiscQueue = False
+    parameters = {}
+    parameters['format'] = "json"
+    parameters['callback'] = "render"
+    requestUrl = "http://odata.netflix.com/Catalog/Genres"
+    requestUri = requestUrl + normalize_params(parameters)
+    print requestUri
+    data = getUrlString(requestUri)
+    #print data
+    reobj = re.compile(r"(?sm)(?sm)(?P<main>(__metadata)((?!(__metadata)).)*)", re.DOTALL | re.MULTILINE)
+    #real processing begins here
+    for matchGenre in reobj.finditer(str(data)):
+        curQueueItem = matchGenre.group(1)
+        #now parse out each item
+        reobj = re.compile('"uri": "http://odata.netflix.com/Catalog/Genres\\(\'(?P<linkname>[^\']*?)\'\\)", "type": "NetflixCatalog.Model.Genre".*?}, "Name": "(?P<displayname>.*?)", "Titles": {', re.DOTALL | re.MULTILINE)
+        for matchGenreItem in reobj.finditer(curQueueItem):
+            curX = XInfo()
+            curX.Title = matchGenreItem.group(2)
+            curX.LinkName = matchGenreItem.group(1)
+            if(checkGenre(curX.Title)):
+                addDirectoryItem(curX, parameters={ PARAMETER_KEY_MODE:"gExpand" + "lId" + curX.LinkName + str(boolDiscQueue) }, isFolder=True, thumbnail=curX.Poster)
+    time.sleep(1)
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_LABEL )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_DATE )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_RUNTIME )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_YEAR )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_GENRE )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_MPAA_RATING )
+    xbmcplugin.setContent(int(sys.argv[1]),'Movies')
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
+
+def oDataSearch(strSeachValue, sDiscMode):
+    #http://odata.netflix.com/Catalog/Titles?$filter=substringof%28%27xxx%27,%20Name%29
+    instantOnly = False
+    strType = "0"
+    initApp()
+    parameters = {}
+    parameters['filter'] = strSeachValue
+    parameters['callback'] = "render"
+    if(sDiscMode == "False"):
+        parameters['filter'] = "Instant/Available eq true"
+    requestUrl = "http://odata.netflix.com/Catalog/Titles"
+    requestUri = requestUrl + normalize_params(parameters)
+    data = getUrlString(requestUri)
+    #print data
+    if(DEBUG):
+        print data
+        #simplejson.dumps(data,indent=4)
+    counter = 0
+    reobj = re.compile(r'(?sm)(?P<main>(__metadata": {.{1,100}"uri")((?!(__metadata": {.{1,100}"uri")).)*)', re.DOTALL | re.IGNORECASE | re.MULTILINE)
+    for match in reobj.finditer(str(data)):
+        curX = XInfo()
+        curQueueItem = match.group(1)
+        curX = getMovieDataFromFeed(curX, curQueueItem, False, netflixClient, instantOnly, strType)
+    time.sleep(1)
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_LABEL )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_DATE )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_RUNTIME )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_YEAR )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_GENRE )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_MPAA_RATING )
+    xbmcplugin.setContent(int(sys.argv[1]),'Movies')
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
+    
+def getGenreListing(nGenreLID, sDiscMode):
+    instantOnly = False
+    strType = "0"
+    initApp()
+    parameters = {}
+    parameters['format'] = "json"
+    parameters['callback'] = "render"
+    if(sDiscMode == "False"):
+        parameters['filter'] = "Instant/Available eq true"
+    requestUrl = "http://odata.netflix.com/Catalog/Genres('" + nGenreLID + "')/Titles"
+    requestUri = requestUrl + normalize_params(parameters)
+    data = getUrlString(requestUri)
+    #print data
+    if(DEBUG):
+        print data
+        #simplejson.dumps(data,indent=4)
+    counter = 0
+    reobj = re.compile(r'(?sm)(?P<main>(__metadata": {.{1,100}"uri")((?!(__metadata": {.{1,100}"uri")).)*)', re.DOTALL | re.IGNORECASE | re.MULTILINE)
+    for match in reobj.finditer(str(data)):
+        curX = XInfo()
+        curQueueItem = match.group(1)
+        curX = getMovieDataFromFeed(curX, curQueueItem, False, netflixClient, instantOnly, strType)
+    time.sleep(1)
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_LABEL )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_DATE )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_RUNTIME )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_YEAR )
+##    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_GENRE )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_MPAA_RATING )
+##    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_STUDIO )
+    xbmcplugin.setContent(int(sys.argv[1]),'Movies')
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
+
+def getEpisodeListing(nShowID, nSeasonID, sDiscMode):
+    print "iQueue TV ShowID : " + nShowID
+    print "iQueue TV SeasonID : : " + nSeasonID
+    print "FormatMode?: " + sDiscMode
+    instantOnly = True
+    strType = "5"
+    initApp()
+    if(not user):
+        exit    
+    feeds = netflixClient.user.getSeries(nShowID,nSeasonID,sDiscMode,0,100)
+    if(DEBUG):
+        print simplejson.dumps(feeds,indent=4)
+    counter = 0
+    #parse each item in queue by looking for the category: [ string 
+    reobj = re.compile(r"(?sm)(?P<main>('catalog_title': )((?!('catalog_title': )).)*)", re.DOTALL | re.MULTILINE)
+    for match in reobj.finditer(str(feeds)):
+        curX = XInfo()
+        curQueueItem = match.group(1)
+        if(DEBUG):
+            print "current feed item from regex is: " + curQueueItem
+        #now parse out each item
+        curX = getMovieDataFromFeed(curX, curQueueItem, False, netflixClient, instantOnly, strType, True)
     time.sleep(1)
     xbmcplugin.setContent(int(sys.argv[1]),'Movies')
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
@@ -1123,6 +1582,12 @@ def doSearch(strArg, strQueue, strInstantOnly=None):
         #now parse out each item
         curX = getMovieDataFromFeed(curX, curQueueItem, False, netflixClient, instantOnly, strType)
     time.sleep(1)
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_LABEL )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_DATE )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_RUNTIME )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_YEAR )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_GENRE )
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_MPAA_RATING )
     xbmcplugin.setContent(int(sys.argv[1]),'Movies')
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 

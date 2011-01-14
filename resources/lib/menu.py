@@ -86,6 +86,8 @@ MODER1 = 901
 MODER2 = 902
 MODER3 = 903
 
+MODEO1 = 10001
+
 # parameter keys
 PARAMETER_KEY_MODE = "mode"
 
@@ -177,6 +179,9 @@ SUBMENUR1 = "Shipped"
 SUBMENUR2 = "Returned"
 SUBMENUR3 = "Watched"
 
+
+## Genre Browse
+SUBMENUO1 = "Browse by Genre"
 # plugin handle
 handle = int(sys.argv[1])
 
@@ -254,6 +259,7 @@ def show_root_menu():
    if(not IN_CANADA):
       addDirectoryItem(name=SUBMENU0d, parameters={ PARAMETER_KEY_MODE:MODE0d }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_by_mail.png")
    addDirectoryItem(name=SUBMENUR, parameters={ PARAMETER_KEY_MODE:MODER }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/rental_history.png")
+   addDirectoryItem(name=SUBMENUO1, parameters={ PARAMETER_KEY_MODE:MODEO1 }, isFolder=True)
    xbmcplugin.endOfDirectory(handle=handle, succeeded=True)   
 
 def show_instant_menu():
@@ -395,18 +401,63 @@ def show_SUBMENUD7():
    xbmcplugin.endOfDirectory(handle=handle, succeeded=True)
 
 # parameter values
-params = parameters_string_to_dict(sys.argv[2])
-mode = int(params.get(PARAMETER_KEY_MODE, "0"))
 print "##########################################################"
-print("Mode: %s" % mode)
 print("Arg1: %s" % sys.argv[1])
 print("Arg2: %s" % sys.argv[2])
+params = parameters_string_to_dict(sys.argv[2])
+submode = ""
+if re.search(r"tvExpand", sys.argv[2]):
+   #do expand tv show into ui list
+   tvShowID = ""
+   tvSeasonID = ""
+   tvMode = ""
+   matchTvEpExp = re.search(r"tvExpandshId(\d*)seId(\d*)(True|False)", sys.argv[2])
+   if matchTvEpExp:
+      tvShowID = matchTvEpExp.group(1)
+      tvSeasonID = matchTvEpExp.group(2)
+      tvMode = matchTvEpExp.group(3)
+   else:
+      "expand called but could not figure out the id from the call, the menu link is invalid in iqueue.py"
+      mode = "failed to parse mode"
+
+   print "TV Episode Expand Called for show with Show ID: " + tvShowID + " Season ID: " + tvSeasonID + " DiscMode: " + tvMode
+   mode = "tvexp"
+elif re.search(r"gExpand", sys.argv[2]):
+   print "using Genre Link code"
+   #do expand genre items into ui list
+   genreLink = ""
+   genreMode = ""
+   matchTvEpExp = re.search(r"gExpandlId(.*?)(True|False)", sys.argv[2])
+   if matchTvEpExp:
+      genreLink = matchTvEpExp.group(1)
+      genreMode = matchTvEpExp.group(2)
+   else:
+      "expand called but could not figure out the genre from the call, the menu link is invalid in iqueue.py"
+      mode = "failed to parse mode"
+
+   print "Genre Expand Called for show with Show ID: " + genreLink + " DiscMode: " + genreMode
+   mode = "genreexp"
+else:
+   mode = int(params.get(PARAMETER_KEY_MODE, "0"))
+
+print("Mode: %s" % mode)
 print "##########################################################"
 
 # Depending on the mode, call the appropriate function to build the UI.
 if not sys.argv[2]:
    # new start
    show_root_menu()
+elif mode == "tvexp":
+   #expand tv episodes
+   print "expanding episode list"
+   if(tvMode == False):
+      getEpisodeListing(tvShowID,tvSeasonID,"instant")
+   else:
+      getEpisodeListing(tvShowID,tvSeasonID,"Disc")
+elif mode == "genreexp":
+   #expand tv episodes
+   print "expanding genre list"
+   getGenreListing(genreLink,genreMode)
 elif mode == MODE0iw:
    show_instant_menu()
 elif mode == MODE0d:
@@ -442,7 +493,8 @@ elif mode == MODE4:
     if (keyboard.isConfirmed()):
       arg = keyboard.getText()
       #print "keyboard returned: " + keyboard.getText()
-      doSearch(arg, "instant", True)
+      #doSearch(arg, "instant", True)
+      oDataSearch(arg, "False")
     else:
       print "user canceled"
 
@@ -597,3 +649,7 @@ elif mode == MODER2:
    rhReturned()
 elif mode == MODER3:
    rhWatched()
+
+#genre browsing
+elif mode == MODEO1:
+   getInstantGenres()
