@@ -39,6 +39,7 @@ class XInfo:
         self.bAvail = False
         self.bAvailFrom = ""
         self.bAvailTil = ""
+        self.nomenu = False
         
 
 

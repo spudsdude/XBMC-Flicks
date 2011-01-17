@@ -14,6 +14,7 @@ MODE3 = 30
 MODE3a = 31
 MODE3b = 32
 MODE4 = 40
+MODE4ex = 41
 MODE5 = 50
 MODE5a = 51
 MODE5b = 52
@@ -103,6 +104,7 @@ SUBMENU3 = "All New Arrivals"
 SUBMENU3a = "All New Arrivals: Movies"
 SUBMENU3b = "All New Arrivals: TV"
 SUBMENU4 = "Search..."
+SUBMENU4ex = "Experimental Search..."
 SUBMENU5 = "Top 25 New Arrivals"
 SUBMENU5a = "Top 25 New Arrivals: Movies"
 SUBMENU5b = "Top 25 New Arrivals: TV"
@@ -259,7 +261,7 @@ def show_root_menu():
    if(not IN_CANADA):
       addDirectoryItem(name=SUBMENU0d, parameters={ PARAMETER_KEY_MODE:MODE0d }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/disc_by_mail.png")
    addDirectoryItem(name=SUBMENUR, parameters={ PARAMETER_KEY_MODE:MODER }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/rental_history.png")
-   addDirectoryItem(name=SUBMENUO1, parameters={ PARAMETER_KEY_MODE:MODEO1 }, isFolder=True)
+
    xbmcplugin.endOfDirectory(handle=handle, succeeded=True)   
 
 def show_instant_menu():
@@ -277,8 +279,9 @@ def show_instant_menu():
    addDirectoryItem(name=SUBMENU3, parameters={ PARAMETER_KEY_MODE:MODE3 }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_new_all.png")
    addDirectoryItem(name=SUBMENU3a, parameters={ PARAMETER_KEY_MODE:MODE3a }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_new_all_movies.png")
    addDirectoryItem(name=SUBMENU3b, parameters={ PARAMETER_KEY_MODE:MODE3b }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_new_all_tv.png")
-      
+   addDirectoryItem(name=SUBMENUO1, parameters={ PARAMETER_KEY_MODE:MODEO1 }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/browse_by_genre.png")      
    addDirectoryItem(name=SUBMENU4, parameters={ PARAMETER_KEY_MODE:MODE4 }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_search.png")
+   addDirectoryItem(name=SUBMENU4ex, parameters={ PARAMETER_KEY_MODE:MODE4ex }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_search.png")
    #addDirectoryItem(name=SUBMENU6, parameters={ PARAMETER_KEY_MODE:MODE6 }, isFolder=True, thumbnail="special://home/addons/plugin.video.xbmcflicks/resources/instant_watch_top25s.png")
    xbmcplugin.endOfDirectory(handle=handle, succeeded=True)
 
@@ -488,6 +491,17 @@ elif mode == MODE3b:
       getNewToWatchInstantCA("2")
 
 elif mode == MODE4:
+    keyboard = xbmc.Keyboard()
+    keyboard.doModal()
+    if (keyboard.isConfirmed()):
+      arg = keyboard.getText()
+      #print "keyboard returned: " + keyboard.getText()
+      doSearch(arg, "instant", True)
+      #oDataSearch(arg, "True")
+    else:
+      print "user canceled"
+
+elif mode == MODE4ex:
     keyboard = xbmc.Keyboard()
     keyboard.doModal()
     if (keyboard.isConfirmed()):
