@@ -99,33 +99,33 @@ def getAuth(netflix, verbose):
 
 def saveUserInfo():
     #create the file
-    f = open(USERINFO_FOLDER + 'userinfo.txt','r+')
+    f = open(os.path.join(str(USERINFO_FOLDER), 'userinfo.txt'),'r+')
     setting ='requestKey=' + MY_USER['request']['key'] + '\n' + 'requestSecret=' + MY_USER['request']['secret'] + '\n' +'accessKey=' + MY_USER['access']['key']+ '\n' + 'accessSecret=' + MY_USER['access']['secret']
     f.write(setting)
     f.close()
 
 # END AUTH
 def checkplayercore():
-    checkFile = XBMCPROFILE + 'playercorefactory.xml'
+    checkFile = os.path.join(str(XBMCPROFILE), 'playercorefactory.xml')
     havefile = os.path.isfile(checkFile)
     if(not havefile):
         #copy file data from addon folder
-        fileWithData = ROOT_FOLDER + 'resources/playercorefactory.xml'
+        fileWithData = os.path.join(str(RESOURCE_FOLDER), 'playercorefactory.xml')
         if not os.path.exists('C:\Program Files (x86)'):
-            fileWithData = ROOT_FOLDER + 'resources/playercorefactory32.xml'
+            fileWithData = os.path.join(str(RESOURCE_FOLDER), 'playercorefactory32.xml')
         if not os.path.exists('C:\Program Files'):
-            fileWithData = ROOT_FOLDER + 'resources/playercorefactoryOSX.xml'
+            fileWithData = os.path.join(str(RESOURCE_FOLDER), 'playercorefactoryOSX.xml')
         data = open(str(fileWithData),'r').read()
         f = open(checkFile,'r+')
         f.write(data)
         f.close()
     
 def checkadvsettings():
-    checkFile = XBMCPROFILE + 'advancedsettings.xml'
+    checkFile = os.path.join(str(XBMCPROFILE), 'advancedsettings.xml')
     havefile = os.path.isfile(checkFile)
     if(not havefile):
         #copy file from addon folder
-        fileWithData = ROOT_FOLDER + 'resources/advancedsettings.xml'
+        fileWithData = os.path.join(str(RESOURCE_FOLDER), 'advancedsettings.xml')
         data = open(str(fileWithData),'r').read()
         f = open(checkFile,'r+')
         f.write(data)
@@ -140,21 +140,22 @@ def addDirectoryItem(curX, isFolder=True, parameters={}, thumbnail=None):
     url = sys.argv[0] + '?' + urllib.urlencode(parameters)
     li.setInfo( type="Video", infoLabels={ "Mpaa": curX.Mpaa, "TrackNumber": int(curX.Position), "Year": int(curX.Year), "OriginalTitle": curX.Title, "Title": curX.TitleShort, "Rating": float(curX.Rating)*2, "Duration": str(int(curX.Runtime)/60), "Director": curX.Directors, "Genre": curX.Genres, "CastAndRole": curX.Cast, "Plot": curX.Synop})
     commands = []
+    modScripLoc = os.path.join(str(LIB_FOLDER), 'modQueue.py')   
     argsRemove = str(curX.ID) + "delete"
     argsAdd = str(curX.ID) + "post"
     argsSimilar = str(curX.ID)
-    runnerRemove = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsRemove + ")"
-    runnerAdd = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsAdd + ")"
-    runnerSearch = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsSimilar + ")"
+    runnerRemove = "XBMC.RunScript(" + modScripLoc + ", " + argsRemove + ")"
+    runnerAdd = "XBMC.RunScript(" + modScripLoc + ", " + argsAdd + ")"
+    runnerSearch = "XBMC.RunScript(" + modScripLoc + ", " + argsSimilar + ")"
 
     argsRemoveD = str(curX.ID) + "discdelete"
     argsAddD = str(curX.ID) + "discpost"
     argsAddTopD = str(curX.ID) + "disctoppost"
     argsSimilarD = str(curX.ID)
-    runnerRemoveD = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsRemoveD + ")"
-    runnerAddD = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsAddD + ")"
-    runnerAddTopD = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsAddTopD + ")"
-    runnerSearchD = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsSimilarD + ")"
+    runnerRemoveD = "XBMC.RunScript(" + modScripLoc + ", " + argsRemoveD + ")"
+    runnerAddD = "XBMC.RunScript(" + modScripLoc + ", " + argsAddD + ")"
+    runnerAddTopD = "XBMC.RunScript(" + modScripLoc + ", " + argsAddTopD + ")"
+    runnerSearchD = "XBMC.RunScript(" + modScripLoc + ", " + argsSimilarD + ")"
 
     if(not curX.nomenu):
         if(not curX.TvEpisode):
@@ -183,7 +184,7 @@ def addLink(name,url,curX,rootID=None):
     liz.setInfo( type="Video", infoLabels={ "Mpaa": curX.Mpaa, "TrackNumber": int(curX.Position), "Year": int(curX.Year), "OriginalTitle": curX.Title, "Title": curX.TitleShort, "Rating": float(curX.Rating)*2, "Duration": str(int(curX.Runtime)/60), "Director": curX.Directors, "Genre": curX.Genres, "CastAndRole": curX.Cast, "Plot": curX.Synop })
 
     commands = []
-
+    modScripLoc = os.path.join(str(LIB_FOLDER), 'modQueue.py')
     argsRemove = str(curX.ID) + "delete"
     argsAdd = str(curX.ID) + "post"
     argsSimilar = str(curX.ID)
@@ -191,9 +192,9 @@ def addLink(name,url,curX,rootID=None):
         argsRemove = str(rootID) + "delete"
         argsAdd = str(rootID) + "post"
         argsSimilar = str(rootID)
-    runnerRemove = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsRemove + ")"
-    runnerAdd = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsAdd + ")"
-    runnerSearch = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsSimilar + ")"
+    runnerRemove = "XBMC.RunScript(" + modScripLoc + ", " + argsRemove + ")"
+    runnerAdd = "XBMC.RunScript(" + modScripLoc + ", " + argsAdd + ")"
+    runnerSearch = "XBMC.RunScript(" + modScripLoc + ", " + argsSimilar + ")"
 
     if(not curX.TvEpisode):
         commands.append(( 'Netflix: Add to Instant Queue', runnerAdd, ))
@@ -212,11 +213,14 @@ def addLink(name,url,curX,rootID=None):
 def addLinkDisc(name,url,curX,rootID=None):
     ok=True
     liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=curX.Poster)
-    #if(xSummary):
     liz.setInfo( type="Video", infoLabels={ "Mpaa": curX.Mpaa, "TrackNumber": int(curX.Position), "Year": int(curX.Year), "OriginalTitle": curX.Title, "Title": curX.TitleShort, "Rating": float(curX.Rating)*2, "Duration": str(int(curX.Runtime)/60), "Director": curX.Directors, "Genre": curX.Genres, "CastAndRole": curX.Cast, "Plot": curX.Synop })
 
     commands = []
-    url = REAL_LINK_PATH + curX.ID + '_disc.html'
+    filename = curX.ID + '_disc.html'
+    url = os.path.join(str(REAL_LINK_PATH), filename)
+
+    modScripLoc = os.path.join(str(LIB_FOLDER), 'modQueue.py')
+    
     argsRemoveD = str(curX.ID) + "discdelete"
     argsAddD = str(curX.ID) + "discpost"
     argsAddTopD = str(curX.ID) + "disctoppost"
@@ -226,10 +230,10 @@ def addLinkDisc(name,url,curX,rootID=None):
         argsRemoveD = str(rootID) + "discdelete"
         argsAddD = str(rootID) + "discpost"
         argsSimilarD = str(rootID)
-    runnerRemoveD = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsRemoveD + ")"
-    runnerAddD = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsAddD + ")"
-    runnerAddTopD = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsAddTopD + ")"
-    runnerSearchD = "XBMC.RunScript(special://home/addons/plugin.video.xbmcflicks/resources/lib/modQueue.py, " + argsSimilarD + ")"
+    runnerRemoveD = "XBMC.RunScript(" + modScripLoc + ", " + argsRemoveD + ")"
+    runnerAddD = "XBMC.RunScript(" + modScripLoc + ", " + argsAddD + ")"
+    runnerAddTopD = "XBMC.RunScript(" + modScripLoc + ", " + argsAddTopD + ")"
+    runnerSearchD = "XBMC.RunScript(" + modScripLoc + ", " + argsSimilarD + ")"
 
     if(not curX.TvEpisode):
         commands.append(( 'Netflix: Add to Disc Queue', runnerAddD, ))
@@ -248,28 +252,32 @@ def addLinkDisc(name,url,curX,rootID=None):
 
 def writeLinkFile(id, title):
     #check to see if we already have the file
-    havefile = os.path.isfile(LINKS_FOLDER + id + '.html')
+    filename = id + '.html'
+    fileLoc = os.path.join(str(LINKS_FOLDER), str(filename))
+    havefile = os.path.isfile(fileLoc)
     if(not havefile):
         #create the file
         player = "WiPlayerCommunityAPI"
         if(useAltPlayer):
             player = "WiPlayer"
         redirect = "<!doctype html public \"-//W3C//DTD HTML 4.0 Transitional//EN\"><html><head><title>Requesting Video: " + title + "</title><meta http-equiv=\"REFRESH\" content=\"0;url=http://www.netflix.com/" + player + "?lnkctr=apiwn&nbb=y&devKey=gnexy7jajjtmspegrux7c3dj&movieid=" + id + "\"></head><body bgcolor=\"#FF0000\"> <p>Redirecting to Netflix in a moment ...</p></body></html>"
-        f = open(LINKS_FOLDER + id + '.html','r+')
+        f = open(fileLoc,'r+')
         f.write(redirect)
         f.close()
 
 #writeDiscLinkFile
 def writeDiscLinkFile(id, title, webURL):
     #check to see if we already have the file
-    havefile = os.path.isfile(LINKS_FOLDER + id + '_disc.html')
+    filename = id + '_disc.html'
+    fileLoc = os.path.join(str(LINKS_FOLDER), str(filename))
+    havefile = os.path.isfile(fileLoc)
     if(not havefile):
         #create the file
         player = "WiPlayerCommunityAPI"
         if(useAltPlayer):
             player = "WiPlayer"
         redirect = "<!doctype html public \"-//W3C//DTD HTML 4.0 Transitional//EN\"><html><head><title>Requesting Video: " + title + "</title><meta http-equiv=\"REFRESH\" content=\"0;url=" + webURL + "\"></head><body bgcolor=\"#0000cc\"> <p>Redirecting to Netflix in a moment ...</p></body></html>"
-        f = open(LINKS_FOLDER + id + '_disc.html','r+')
+        f = open(fileLoc,'r+')
         f.write(redirect)
         f.close()
 
@@ -649,7 +657,7 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
             #print "didn't match match"
             matchIds2 = re.search(r'id[\'"]: u{0,1}[\'"](?P<fullId>.*?/(?P<idNumber>\d{1,15}))[\'"].*?', curQueueItem, re.DOTALL | re.MULTILINE)
             if matchIds2:
-                print "id regex: matched matchIds2"
+                #print "id regex: matched matchIds2"
                 curX.FullId = matchIds2.group(1)
                 curX.ID = matchIds2.group(2)
             else:
@@ -675,9 +683,7 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
     if (matchShowData):
         curX.TvShow = True
         curX.TvShowSeriesID = matchShowData.group(1).strip()
-        print curX.TvShowSeriesID
         curX.TvShowSeasonID = matchShowData.group(2).strip()
-        print curX.TvShowSeasonID
 
     #synop
     match = re.search(r"u'synopsis': {.*?u'regular': u'(.*?)}", curQueueItem, re.DOTALL | re.MULTILINE)
@@ -749,7 +755,7 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
         print "curFullId: " + curX.FullId
 
     if (discQueue):
-        addLinkDisc(curX.TitleShort,REAL_LINK_PATH + curX.TitleShortLink + '.html', curX)
+        addLinkDisc(curX.TitleShort,os.path.join(str(REAL_LINK_PATH), str(curX.TitleShortLink + '.html')), curX)
         #write the link file for Disc items that will link to the webpage
         writeDiscLinkFile(curX.TitleShortLink, curX.Title, curX.WebURL)
         return curX
@@ -776,7 +782,7 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
                 return curX
 
     if(not curX.TvShow):
-        addLink(curX.TitleShort,REAL_LINK_PATH + curX.TitleShortLink + '.html', curX)
+        addLink(curX.TitleShort,os.path.join(str(REAL_LINK_PATH), str(curX.TitleShortLink + '.html')), curX)
         #write the link file
         writeLinkFile(curX.TitleShortLink, curX.Title)
         return curX
@@ -791,7 +797,7 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
             addDirectoryItem(curX, parameters={ PARAMETER_KEY_MODE:"tvExpand" + "shId" + curX.TvShowSeriesID + "seId" + curX.TvShowSeasonID + str(boolDiscQueue) }, isFolder=True, thumbnail=curX.Poster)
 
             #add the link to UI
-            #addLink(curX.TitleShort,REAL_LINK_PATH + curX.TitleShortLink + '.html', curX)
+            #addLink(curX.TitleShort,os.path.join(str(REAL_LINK_PATH), str(curX.TitleShortLink + '.html')), curX)
             #write the link file
             #writeLinkFile(curX.TitleShortLink, curX.Title)
             return curX
@@ -858,14 +864,14 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
                 curXe.TitleShortLink.strip()
                 
                 #add and write file
-                addLink(curXe.TitleShort,REAL_LINK_PATH + curXe.TitleShortLink + '.html', curXe, curX.ID)
+                addLink(curXe.TitleShort,os.path.join(str(REAL_LINK_PATH), str(curXe.TitleShortLink + '.html')), curXe, curX.ID)
                 writeLinkFile(curXe.TitleShortLink, curXe.Title)
             else:
                 #don't add it
                 print "not adding episode, couldn't parse id"
     if (not foundMatch):
         #this is to cover those tv shows that are just a single episode
-        addLink(curX.TitleShort,REAL_LINK_PATH + curX.TitleShortLink + '.html', curX)
+        addLink(curX.TitleShort,os.path.join(str(REAL_LINK_PATH), str(curX.TitleShortLink + '.html')), curX)
         #write the link file
         writeLinkFile(curX.TitleShortLink, curX.Title)
     #xbmcplugin.endOfDirectory(int(sys.argv[1]))
@@ -998,7 +1004,7 @@ def parseRSSFeedItem(curQueueItem, curX):
             matchID = reobj.search(match.group(2))
             if matchID:
                 curX.ID = matchID.group(1)
-            curX.Poster = "http://cdn-8.nflximg.com/us/boxshots/" + POSTER_QUAL + "/" + curX.ID + ".jpg"
+            curX.Poster = "http://cdn-8.nflximg.com/us/boxshots/" + str(POSTER_QUAL) + "/" + curX.ID + ".jpg"
             
     except:
         print "error parsing data from RSS feed Item"
@@ -1015,7 +1021,7 @@ def parseFeedburnerItem(curQueueItem, curX):
             curX.Synop = matchCurItem.group(3)
             curX.WebURL = matchCurItem.group(4)
             curX.ID = matchCurItem.group(5)
-            curX.Poster = matchCurItem.group(2) + POSTER_QUAL + "/" + curX.ID + ".jpg"
+            curX.Poster = matchCurItem.group(2) + str(POSTER_QUAL) + "/" + curX.ID + ".jpg"
     except:
         print "error parsing data from Feedburner RSS feed Item"        
     return curX
@@ -1037,10 +1043,10 @@ def convertFeedburnerFeed(tData, intLimit, DiscQueue=None):
             else:
                 #add the link to the UI
                 if(DiscQueue):
-                    addLinkDisc(curX.TitleShort,REAL_LINK_PATH + curX.ID + '_disc.html', curX)
+                    addLinkDisc(curX.TitleShort,os.path.join(str(REAL_LINK_PATH), str(curX.ID + '_disc.html')), curX)
                     writeDiscLinkFile(curX.ID, curX.Title, curX.WebURL)
                 else:
-                    addLink(curX.TitleShort,REAL_LINK_PATH + curX.ID + '.html', curX)            
+                    addLink(curX.TitleShort,os.path.join(str(REAL_LINK_PATH), str(curX.ID + '.html')), curX)            
                     #write the link file
                     writeLinkFile(curX.ID, curX.Title) 
 
@@ -1105,10 +1111,10 @@ def convertRSSFeed(tData, intLimit, DiscQueue=None, strArg=None):
         if(not skip):
         #add the link to the UI
             if(DiscQueue):
-                addLinkDisc(curX.TitleShort,REAL_LINK_PATH + curX.ID + '_disc.html', curX)
+                addLinkDisc(curX.TitleShort,os.path.join(str(REAL_LINK_PATH), str(curX.ID + '_disc.html')), curX)
                 writeDiscLinkFile(curX.ID, curX.Title, curX.WebURL)
             else:
-                addLink(curX.TitleShort,REAL_LINK_PATH + curX.ID + '.html', curX)            
+                addLink(curX.TitleShort,os.path.join(str(REAL_LINK_PATH), str(curX.ID + '.html')), curX)            
                 #write the link file
                 writeLinkFile(curX.ID, curX.Title)
 
@@ -1172,7 +1178,8 @@ def initApp():
     global WORKING_FOLDER
     global LINKS_FOLDER
     global REAL_LINK_PATH
-    global IMAGE_FOLDER
+    global RESOURCE_FOLDER
+    global LIB_FOLDER
     global USERINFO_FOLDER
     global XBMCPROFILE
 
@@ -1239,21 +1246,24 @@ def initApp():
     SGSPORTS = getUserSettingGenreDisplay(arg, "sgSports")
     SGTV = getUserSettingGenreDisplay(arg, "sgTV")
     SGTHRILLERS = getUserSettingGenreDisplay(arg, "sgThrillers")
-    print "ACTION SET TO: " + str(SGACTION)
+    
     #get addon info
     __settings__ = xbmcaddon.Addon(id='plugin.video.xbmcflicks')
-    ROOT_FOLDER = 'special://home/addons/plugin.video.xbmcflicks/'
-    IMAGE_FOLDER = ROOT_FOLDER + 'resources/'
-    WORKING_FOLDER = __settings__.getAddonInfo("profile")
-    LINKS_FOLDER = WORKING_FOLDER + 'links/'
-    REAL_LINK_PATH = xbmc.translatePath(WORKING_FOLDER + 'links/')
+    ROOT_FOLDER = __settings__.getAddonInfo('path')
+    RESOURCE_FOLDER = os.path.join(str(ROOT_FOLDER), 'resources')
+    LIB_FOLDER = os.path.join(str(RESOURCE_FOLDER), 'lib')
+    WORKING_FOLDER = xbmc.translatePath(__settings__.getAddonInfo("profile"))
+    LINKS_FOLDER = os.path.join(str(WORKING_FOLDER), 'links')
+    REAL_LINK_PATH = os.path.join(str(WORKING_FOLDER), 'links')
     USERINFO_FOLDER = WORKING_FOLDER
     XBMCPROFILE = xbmc.translatePath('special://profile')
     if(DEBUG):
         print "root folder: " + ROOT_FOLDER
         print "working folder: " + WORKING_FOLDER
+        print "links folder: " + LINKS_FOLDER
         print "real link path: " + REAL_LINK_PATH
-        print "image folder: " + IMAGE_FOLDER
+        print "resource folder: " + RESOURCE_FOLDER
+        print "lib folder: " + LIB_FOLDER
         print "userinfo folder: " + USERINFO_FOLDER
 
     #check playercorefactory and advancedsettings, create if missing
@@ -1271,7 +1281,7 @@ def initApp():
         os.makedirs(LINKS_FOLDER)
     
     #get user info
-    userInfoFileLoc = USERINFO_FOLDER + 'userinfo.txt'
+    userInfoFileLoc = os.path.join(str(USERINFO_FOLDER), 'userinfo.txt')
     print "USER INFO FILE LOC: " + userInfoFileLoc
     havefile = os.path.isfile(userInfoFileLoc)
     if(not havefile):
@@ -1414,68 +1424,68 @@ def checkGenre(strGenreName):
     result = False
     if SGGAY:
         if re.search(r"(lesb|gay|sex|erotic|experimental)", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/lesbian.png"
+            return "lesbian.png&genre=Gay & Lesbian"
     else:
         if re.search(r"(lesb|gay|sex|erotic|experimental)", strGenreName, re.IGNORECASE):
             return False
 
     if SGACTION:
         if re.search(r"(action|adventures|mobster|heist|swashbucklers|westerns|epics|blockbusters)", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/action.png&genre=Action & Adventure"
+            return "action.png&genre=Action & Adventure"
     if SGANIME:
         if re.search(r"(anime|animation)", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/anime.png&genre=Anime"
+            return "anime.png&genre=Anime"
 ##    if SGBLURAY:
 ##        if re.search(r"blu", strGenreName, re.IGNORECASE):
-##            return "special://home/addons/plugin.video.xbmcflicks/resources/bluray.png&genre=Blu-ray"
+##            return "bluray.png&genre=Blu-ray"
     if SGCHILDREN:
         if re.search(r"(book characters|animal tales|dinosaurs|nickelodeon|children|family|ages 0-2|ages 2-4|ages 5-7|ages 8-10|ages 11-12|cartoon|comic|kids|disney|inspirational|magic)", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/children.png&genre=Children & Family"
+            return "children.png&genre=Children & Family"
     if SGCOMEDY:
         if re.search(r"(mock|spoof|screwball|stand-up|saturday night live|slapstick|comedy|comedies|humor)", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/comedy.png&genre=Comedy"
+            return "comedy.png&genre=Comedy"
     if SGDOCUMENTARY:
         if re.search(r"document", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/documentary.png&genre=Documentary"
+            return "documentary.png&genre=Documentary"
     if SGDRAMA:
         if re.search(r"biographies|suspense|drama|mystery|underdogs|epics|blockbusters", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/drama.png&genre=Drama"
+            return "drama.png&genre=Drama"
     if SGFAITH:
         if re.search(r"(religious|god|faith|pray|spirit)", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/faith.png&genre=Faith & Spirituality"
+            return "faith.png&genre=Faith & Spirituality"
     if SGHORROR:
         if re.search(r"(monsters|satanic|horror|scream|dead|slash|kill)", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/horror.png&genre=Horror"
+            return "horror.png&genre=Horror"
     if SGINDIE:
         if re.search(r"(indie|independent|IMAX|LOGO|film noir)", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/independent.png&genre=Independant"
+            return "independent.png&genre=Independant"
     if SGMUSIC:
         if re.search(r"(blues|swing|reggae|singer|tunes|art|music|rock|rap|guitar|bass|jazz|r&b|folk|language|drum|guitar|banjo|karaoke|pop|concerts|piano|disco|country|new age|keyboard|opera)", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/music.png&genre=Music"
+            return "music.png&genre=Music"
     if SGROMANCE:
         if re.search(r"(shakespeare|tearjerk|romance)", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/romance.png&genre=Romance"
+            return "romance.png&genre=Romance"
     if SGSCIFI:
         if re.search(r"(sci-fi|scifi|science|fantasy)", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/scifi.png&genre=Sci-Fi"
+            return "scifi.png&genre=Sci-Fi"
     if SGSPECIALINTEREST:
         if re.search(r"(world|coming of age|theatrical|period pieces|sculpture|wine|social studies|sytle|beauty|voice lessons|technology|math|meditation|body|home|garden|pets|special|hobbies|math|food|heal|homespecial|blaxploitation|painting|poker|goth|computer|hobby|entertaining|preganancy|parent|career|bollywood|cooking)", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/special_interest.png&genre=Special Interest"
+            return "special_interest.png&genre=Special Interest"
     if SGTV:
         if re.search(r"(car culture|tv|television)", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/television.png&genre=Television"
+            return "television.png&genre=Television"
     if SGSPORTS:
         if re.search(r"(skateboarding|climbing|soccer|skiing|self-def|snowboard|wrestling|yoga|tai chi|climbing|golf|stunts|tennis|fishing|pilates|fitness|car|hockey|biking|olympics|bmx|bodybuilding|car|kung fu|strength|sports|racing|baseball|basketball|boxing|aerobics|cycling|dance|boxing|karate|martial arts|extreme combat|glutes|football|workout|motorcycle|hunting|boat)", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/sports.png&genre=Sports"
+            return "sports.png&genre=Sports"
     if SGTHRILLERS:
         if re.search(r"(thrill|werewolves|vampires|frankenstein|zombies|creature)", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/thrillers.png&genre=Thrillers"
+            return "thrillers.png&genre=Thrillers"
     if SGCLASSICS:
         if re.search(r"(classic|silent)", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/classics.png&genre=Classics"
+            return "classics.png&genre=Classics"
     if SGFOREIGN:
         if re.search(r"(russia|china|foreign|scandinavia|asia|spain|thailand|united kingdom|brazil|australia|czech|africa|argentina|belgium|eastern|france|germany|greece|hong kong|india|iran|israel|italy|japan|judaica|korea|latin america|mexico|middle east|netherlands|philippines|poland)", strGenreName, re.IGNORECASE):
-            return "special://home/addons/plugin.video.xbmcflicks/resources/foreign.png&genre=Foreign"
+            return "foreign.png&genre=Foreign"
     if(DEBUG):
         print "Filtered out: " + strGenreName
     return False
@@ -1504,7 +1514,7 @@ def getInstantGenres():
             curGenreCheckData = checkGenre(curX.Title)
             match = re.search(r"(.*\.png)&genre=(.*)", str(curGenreCheckData))
             if match:
-                curX.Poster = match.group(1)
+                curX.Poster = os.path.join(str(RESOURCE_FOLDER), str(match.group(1)))
                 curX.Genres = match.group(2)
                 curX.nomenu = True
                 addDirectoryItem(curX, parameters={ PARAMETER_KEY_MODE:"gExpand" + "lId" + curX.LinkName + str(boolDiscQueue) }, isFolder=True, thumbnail=curX.Poster)
