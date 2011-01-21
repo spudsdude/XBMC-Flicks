@@ -1302,7 +1302,7 @@ def initApp():
         print "finished loading up user information from file"
     else:
         #no match, need to fire off the user auth from the start
-        print "couldn't load user information from userinfo.properties file"
+        print "couldn't load user information from userinfo.txt file"
     #auth the user
     netflixClient = NetflixClient(APP_NAME, API_KEY, API_SECRET, CALLBACK, VERBOSE_USER_LOG)
     user = getAuth(netflixClient,VERBOSE_USER_LOG)
