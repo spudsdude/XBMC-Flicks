@@ -32,7 +32,7 @@ def __init__(self):
     self.data = []
 
 def startBrowser(url):
-	cmd="open -n '"+url+"'"
+	cmd="open /Applications/Firefox.app '"+url+"'"
 	print cmd
 	os.system(cmd)
 	
