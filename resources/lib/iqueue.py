@@ -99,7 +99,7 @@ def getAuth(netflix, verbose):
 
 def saveUserInfo():
     #create the file
-    f = open(os.path.join(str(USERINFO_FOLDER), 'userinfo.txt'),'r+')
+    f = open(os.path.join(str(USERINFO_FOLDER), 'userinfo.txt'),'w+')
     setting ='requestKey=' + MY_USER['request']['key'] + '\n' + 'requestSecret=' + MY_USER['request']['secret'] + '\n' +'accessKey=' + MY_USER['access']['key']+ '\n' + 'accessSecret=' + MY_USER['access']['secret']
     f.write(setting)
     f.close()
@@ -116,7 +116,7 @@ def checkplayercore():
         if not os.path.exists('C:\Program Files'):
             fileWithData = os.path.join(str(RESOURCE_FOLDER), 'playercorefactoryOSX.xml')
         data = open(str(fileWithData),'r').read()
-        f = open(checkFile,'r+')
+        f = open(checkFile,'w+')
         f.write(data)
         f.close()
     
@@ -127,7 +127,7 @@ def checkadvsettings():
         #copy file from addon folder
         fileWithData = os.path.join(str(RESOURCE_FOLDER), 'advancedsettings.xml')
         data = open(str(fileWithData),'r').read()
-        f = open(checkFile,'r+')
+        f = open(checkFile,'w+')
         f.write(data)
         f.close()
 
@@ -264,7 +264,7 @@ def writeLinkFile(id, title):
             redirect = "<!doctype html public \"-//W3C//DTD HTML 4.0 Transitional//EN\"><html><head><title>Requesting Video: " + title + "</title><meta http-equiv=\"REFRESH\" content=\"0;url=http://www.netflix.com/" + player + "?lnkctr=apiwn&nbb=y&devKey=gnexy7jajjtmspegrux7c3dj&movieid=" + id + "\"></head><body bgcolor=\"#FF0000\"> <p>Redirecting to Netflix in a moment ...</p></body></html>"
         else:
             redirect = "<!doctype html public \"-//W3C//DTD HTML 4.0 Transitional//EN\"><html><head><title>Requesting Video: " + title + "</title><meta http-equiv=\"REFRESH\" content=\"0;url=http://www.netflix.ca/" + player + "?lnkctr=apiwn&nbb=y&devKey=gnexy7jajjtmspegrux7c3dj&movieid=" + id + "\"></head><body bgcolor=\"#FF0000\"> <p>Redirecting to Netflix in a moment ...</p></body></html>"
-        f = open(fileLoc,'r+')
+        f = open(fileLoc,'w+')
         f.write(redirect)
         f.close()
 
@@ -280,7 +280,7 @@ def writeDiscLinkFile(id, title, webURL):
         if(useAltPlayer):
             player = "WiPlayer"
         redirect = "<!doctype html public \"-//W3C//DTD HTML 4.0 Transitional//EN\"><html><head><title>Requesting Video: " + title + "</title><meta http-equiv=\"REFRESH\" content=\"0;url=" + webURL + "\"></head><body bgcolor=\"#0000cc\"> <p>Redirecting to Netflix in a moment ...</p></body></html>"
-        f = open(fileLoc,'r+')
+        f = open(fileLoc,'w+')
         f.write(redirect)
         f.close()
 
@@ -1306,7 +1306,7 @@ def initApp():
     print "USER INFO FILE LOC: " + userInfoFileLoc
     havefile = os.path.isfile(userInfoFileLoc)
     if(not havefile):
-        f = open(userInfoFileLoc,'r+')
+        f = open(userInfoFileLoc,'w+')
         f.write("")
         f.close()
 
