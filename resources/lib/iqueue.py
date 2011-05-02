@@ -564,18 +564,21 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
 
     
     #title
-    matchTitle = re.search(r'[\'"]title[\'"]: {.*?[\'"]regular[\'"]: u{0,1}[\'](.*?)[\'].*?},', curQueueItem, re.DOTALL | re.MULTILINE)
+    matchTitle = re.search(r'[\'"]title[\'"]: {.*?[\'"]regular[\'"]: u{0,1}(\'|")(.*?)\1.*?},', curQueueItem, re.DOTALL | re.MULTILINE)
     if matchTitle:
-        curX.Title = matchTitle.group(1).strip()
+        curX.Title = matchTitle.group(2).strip()
     else:
-        matchTitleQuoted = re.search(r'[\'"]title[\'"]: {.*?[\'"]regular[\'"]: u{0,1}[\'"](.*?)[\'"].*?},', curQueueItem, re.DOTALL | re.MULTILINE)
-        if matchTitleQuoted:
-            curX.Title = matchTitleQuoted.group(1).strip()
+        matchTitleSQuoted = re.search(r'[\'"]title[\'"]: {.*?[\'"]regular[\'"]: u{0,1}[\'](.*?)[\'].*?},', curQueueItem, re.DOTALL | re.MULTILINE)
+        if matchTitleSQuoted:
+            curX.Title = matchTitleSQuoted.group(1).strip()
         else:
-            matchTitle3 = re.search('"ShortName": "(.*?)"',curQueueItem, re.DOTALL | re.MULTILINE)
-            if matchTitle3:
-                curX.Title = matchTitle3.group(1).strip()
-
+            matchTitleQuoted = re.search(r'[\'"]title[\'"]: {.*?[\'"]regular[\'"]: u{0,1}[\'"](.*?)[\'"].*?},', curQueueItem, re.DOTALL | re.MULTILINE)
+            if matchTitleQuoted:
+                curX.Title = matchTitleQuoted.group(1).strip()
+            else:
+                matchTitle3 = re.search('"ShortName": "(.*?)"',curQueueItem, re.DOTALL | re.MULTILINE)
+                if matchTitle3:
+                    curX.Title = matchTitle3.group(1).strip()
 
     #position
     matchPosition = re.search(r'[\'"]position[\'"]: u{0,1}[\'"](\d{1,6})[\'"], ', curQueueItem, re.DOTALL | re.MULTILINE)
