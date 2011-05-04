@@ -860,7 +860,7 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
             curXe.TvEpisodeEpisodeNum = str(matchEpNum.group("episodeNum"))
 
         matchSeasonNum = re.search('(?sm)u{0,1}[\'"]season_number[\'"]: u{0,1}(?P<seasonNum>\\d{1,3})', matchAllEp.group())
-        if matchEpNum:
+        if matchSeasonNum:
             curXe.TvEpisodeEpisodeSeasonNum = str(matchSeasonNum.group("seasonNum"))
 
         matchShortTitle = re.search('(?sm)u{0,1}[\'"]episode_short_raw[\'"]: u{0,1}[\'"](?P<shorttitle>.*?)[\'"]', matchAllEp.group())
