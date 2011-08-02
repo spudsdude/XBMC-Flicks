@@ -1555,7 +1555,7 @@ def getInstantGenres():
     for matchGenre in reobj.finditer(str(data)):
         curQueueItem = matchGenre.group(1)
         #now parse out each item
-        reobj = re.compile('"uri": "http://odata.netflix.com/Catalog/Genres\\(\'(?P<linkname>[^\']*?)\'\\)", "type": "NetflixCatalog.Model.Genre".*?}, "Name": "(?P<displayname>.*?)", "Titles": {', re.DOTALL | re.MULTILINE)
+        reobj = re.compile('"uri": "http://odata.netflix.com/Catalog/Genres\\(\'(?P<linkname>[^\']*?)\'\\)", "type": "Netflix.Catalog.v2.Genre".*?}, "Name": "(?P<displayname>.*?)", "Titles": {', re.DOTALL | re.MULTILINE)
         for matchGenreItem in reobj.finditer(curQueueItem):
             curX = XInfo()
             curX.Title = matchGenreItem.group(2)
