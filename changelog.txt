@@ -15,3 +15,4 @@
 1.0.19 - fixed issue with single quote in title name, fixed script error with season number parsing
 1.0.20 - fixed issue with instant queue browse by genre
 1.0.21 - fixed OSX browser hardcoded option, now just call's open %url% .. removed instant top 25 movies & tv shows as there isn't a way to isolate what is a show in the rss feed anylonger, the all catagory covers this items, same change to the full lists.
+1.0.22 - Eden Branch
