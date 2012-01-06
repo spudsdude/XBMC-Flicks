@@ -273,12 +273,12 @@ def show_instant_menu():
    addDirectoryItem(name=SUBMENU2, parameters={ PARAMETER_KEY_MODE:MODE2 }, isFolder=True, thumbnail=os.path.join(resourcePath, 'instant_watch_recommended.png'))
 
    addDirectoryItem(name=SUBMENU5, parameters={ PARAMETER_KEY_MODE:MODE5 }, isFolder=True, thumbnail=os.path.join(resourcePath, 'instant_new_top25.png'))
-   addDirectoryItem(name=SUBMENU5a, parameters={ PARAMETER_KEY_MODE:MODE5a }, isFolder=True, thumbnail=os.path.join(resourcePath, 'instant_new_top25_movies.png'))
-   addDirectoryItem(name=SUBMENU5b, parameters={ PARAMETER_KEY_MODE:MODE5b }, isFolder=True, thumbnail=os.path.join(resourcePath, 'instant_new_top25_tv.png'))
+   #addDirectoryItem(name=SUBMENU5a, parameters={ PARAMETER_KEY_MODE:MODE5a }, isFolder=True, thumbnail=os.path.join(resourcePath, 'instant_new_top25_movies.png'))
+   #addDirectoryItem(name=SUBMENU5b, parameters={ PARAMETER_KEY_MODE:MODE5b }, isFolder=True, thumbnail=os.path.join(resourcePath, 'instant_new_top25_tv.png'))
 
    addDirectoryItem(name=SUBMENU3, parameters={ PARAMETER_KEY_MODE:MODE3 }, isFolder=True, thumbnail=os.path.join(resourcePath, 'instant_new_all.png'))
-   addDirectoryItem(name=SUBMENU3a, parameters={ PARAMETER_KEY_MODE:MODE3a }, isFolder=True, thumbnail=os.path.join(resourcePath, 'instant_new_all_movies.png'))
-   addDirectoryItem(name=SUBMENU3b, parameters={ PARAMETER_KEY_MODE:MODE3b }, isFolder=True, thumbnail=os.path.join(resourcePath, 'instant_new_all_tv.png'))
+   #addDirectoryItem(name=SUBMENU3a, parameters={ PARAMETER_KEY_MODE:MODE3a }, isFolder=True, thumbnail=os.path.join(resourcePath, 'instant_new_all_movies.png'))
+   #addDirectoryItem(name=SUBMENU3b, parameters={ PARAMETER_KEY_MODE:MODE3b }, isFolder=True, thumbnail=os.path.join(resourcePath, 'instant_new_all_tv.png'))
    addDirectoryItem(name=SUBMENUO1, parameters={ PARAMETER_KEY_MODE:MODEO1 }, isFolder=True, thumbnail=os.path.join(resourcePath, 'browse_by_genre.png'))      
    addDirectoryItem(name=SUBMENU4, parameters={ PARAMETER_KEY_MODE:MODE4 }, isFolder=True, thumbnail=os.path.join(resourcePath, 'instant_search.png'))
    addDirectoryItem(name=SUBMENU4ex, parameters={ PARAMETER_KEY_MODE:MODE4ex }, isFolder=True, thumbnail=os.path.join(resourcePath, 'instant_search.png'))
