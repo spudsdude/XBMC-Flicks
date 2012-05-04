@@ -564,9 +564,14 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
 
     
     #title
+    #bengalih - added line below to deal with abrupt termination of title's with a single quote
+    curQueueItem = curQueueItem.replace("\\\'", "'")
+
     matchTitle = re.search(r'[\'"]title[\'"]: {.*?[\'"]regular[\'"]: u{0,1}(\'|")(.*?)\1.*?},', curQueueItem, re.DOTALL | re.MULTILINE)
     if matchTitle:
         curX.Title = matchTitle.group(2).strip()
+        #bengalih - added line below to revert single quote escape character to non-escaped quote
+        curX.Title = curX.Title.replace("'", "\'")
     else:
         matchTitleSQuoted = re.search(r'[\'"]title[\'"]: {.*?[\'"]regular[\'"]: u{0,1}[\'](.*?)[\'].*?},', curQueueItem, re.DOTALL | re.MULTILINE)
         if matchTitleSQuoted:
@@ -1601,6 +1606,7 @@ def oDataSearch(strSeachValue, sDiscMode):
         curQueueItem = match.group(1)
         curX = getMovieDataFromFeed(curX, curQueueItem, False, netflixClient, instantOnly, strType)
     time.sleep(1)
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_UNSORTED )
     xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_LABEL )
     xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_DATE )
     xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_RUNTIME )
@@ -1697,6 +1703,7 @@ def doSearch(strArg, strQueue, strInstantOnly=None):
         #now parse out each item
         curX = getMovieDataFromFeed(curX, curQueueItem, False, netflixClient, instantOnly, strType)
     time.sleep(1)
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_UNSORTED )
     xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_LABEL )
     xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_DATE )
     xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_RUNTIME )
@@ -1712,6 +1719,7 @@ def getDVDQueue(displayWhat):
     if(not user):
         exit
     time.sleep(1)
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_UNSORTED )
     xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_LABEL )
     xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_DATE )
     xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_RUNTIME )
@@ -1757,6 +1765,8 @@ def rhWatched():
     if(not user):
         exit
     time.sleep(1)
+    #bengalih - added default unsorted method on line below to replicate standard Netflix timeline display
+    xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_UNSORTED )
     xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_LABEL )
     xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_DATE )
     xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_VIDEO_RUNTIME )
