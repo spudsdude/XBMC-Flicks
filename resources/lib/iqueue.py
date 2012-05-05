@@ -759,9 +759,16 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
     #poster
     posterLoc = ""
     if(posterLoc == ""):
-        posterLoc = "http://cdn-" + str(get_CurMirrorNum()) + ".nflximg.com/us/boxshots/" + POSTER_QUAL + "/" + curX.ID + ".jpg"
+        #bengalih - changed below six lines to account for TV Seasons (Watched) and TV Series (Recommended) or else missing downloads will ensue..
+        if(curX.TvShow):
+            posterLoc = "http://cdn-" + str(get_CurMirrorNum()) + ".nflximg.com/us/boxshots/" + POSTER_QUAL + "/" + curX.TvShowSeriesID + ".jpg"
+            if(curX.TvShowSeasonID):
+                posterLoc = "http://cdn-" + str(get_CurMirrorNum()) + ".nflximg.com/us/boxshots/" + POSTER_QUAL + "/" + curX.TvShowSeasonID + ".jpg"            
+        else:
+             posterLoc = "http://cdn-" + str(get_CurMirrorNum()) + ".nflximg.com/us/boxshots/" + POSTER_QUAL + "/" + curX.ID + ".jpg"
     curX.Poster = posterLoc
     
+    #title
     curX.TitleShortLink = curX.ID
     curX.TitleShortLink.strip()
 
