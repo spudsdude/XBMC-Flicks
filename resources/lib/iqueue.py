@@ -711,11 +711,11 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
         curX.TvShowSeasonID = matchShowData.group(2).strip()
 
     #synop
-    matchSynop = re.search(r"u'synopsis': {.*?u'regular': u'(.*?)}", curQueueItem, re.DOTALL | re.MULTILINE)
+    matchSynop = re.search(r"u'synopsis': {.*?u'regular': u[\'\"](.*?)}", curQueueItem, re.DOTALL | re.MULTILINE)
     if matchSynop:
         curX.Synop = matchSynop.group(1)
     else:
-        matchSynop2 = re.search(r"u'synopsis': {.*?u'short_synopsis': u'(.*?)}", curQueueItem, re.DOTALL | re.MULTILINE)
+        matchSynop2 = re.search(r"u'synopsis': {.*?u'short_synopsis': u[\'\"](.*?)}", curQueueItem, re.DOTALL | re.MULTILINE)
         if matchSynop2:
             curX.Synop = matchSynop2.group(1)
         else:
