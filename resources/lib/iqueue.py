@@ -602,6 +602,10 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
             matchRuntime3 = re.search(r'"NetflixCatalog.Model.InstantAvailability".*?}, "Available": (?P<iAvail>true|false|null), "AvailableFrom": (?P<iAvailFrom>.*?), "AvailableTo": ".*?\((?P<availUntil>\d*)\).*?"Runtime": (\d*), "Rating": .*?\}', curQueueItem, re.DOTALL | re.MULTILINE)
             if matchRuntime3:
                 curX.Runtime = matchRuntime3.group(4)
+            else:
+                matchRuntime4 = re.search(r"u'runtime': ([\d]{1,50})", curQueueItem)
+                if matchRuntime4:
+                    curX.Runtime = matchRuntime4.group(1)
 
     #Available Until (in seconds since EPOC)
     matchAvailUntil = re.search(r"available_until': (\d{8,15})", curQueueItem, re.DOTALL | re.MULTILINE)
@@ -637,7 +641,7 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
     #director
     for matchDir in re.finditer(r"directors': \[(.*?)\]", curQueueItem):
         firstM = True
-        for matchDir2 in re.finditer(r"u'name': u'(.*?)',", str(matchDir.group(1))):
+        for matchDir2 in re.finditer(r"u'name': u'(.*?)'(?:}],)?", str(matchDir.group(1))):
             if (firstM):
                 curX.Directors = curX.Directors + str(matchDir2.groups(1))
                 firstM = False
