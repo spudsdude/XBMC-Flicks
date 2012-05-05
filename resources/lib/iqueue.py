@@ -1181,9 +1181,9 @@ def getUserRentalHistory(netflix, user, strHistoryType, displayWhat=None):
     print "*** What's the rental history? ***"
     feeds = ""
     if(not strHistoryType):
-        feeds = netflix.user.getRentalHistory(None,None,500)
+        feeds = netflix.user.getRentalHistory(None,None,200)
     else:
-        feeds = netflix.user.getRentalHistory(strHistoryType,None,500)
+        feeds = netflix.user.getRentalHistory(strHistoryType,None,200)
         
     if (VERBOSE_USER_LOG):
         print feeds
