@@ -13,10 +13,10 @@ from xml.dom.minidom import parseString
 import simplejson
 from urlparse import urlparse
 
-HOST              = 'api.netflix.com'
+HOST              = 'api-public.netflix.com'
 PORT              = '80'
-REQUEST_TOKEN_URL = 'http://api.netflix.com/oauth/request_token'
-ACCESS_TOKEN_URL  = 'http://api.netflix.com/oauth/access_token'
+REQUEST_TOKEN_URL = 'http://api-public.netflix.com/oauth/request_token'
+ACCESS_TOKEN_URL  = 'http://api-public.netflix.com/oauth/access_token'
 AUTHORIZATION_URL = 'https://api-user.netflix.com/oauth/login'
 
 class NetflixUser:
@@ -83,7 +83,7 @@ class NetflixUser:
         
         requestUrl = '/users/%s' % (accessToken.key)
         
-        info = simplejson.loads( self.client._getResource(requestUrl, token=accessToken ) )
+        info = simplejson.loads( self.client._getResource(requestUrl, token=accessToken ), 'latin-1' )
         self.data = info['user']
         return self.data
         
@@ -107,7 +107,7 @@ class NetflixUser:
             print errorString
             sys.exit(1)
         try:
-            info = simplejson.loads(self.client._getResource(url,token=accessToken ))
+            info = simplejson.loads(self.client._getResource(url,token=accessToken ), 'latin-1')
         except:
             return []
         else:
@@ -130,7 +130,7 @@ class NetflixUser:
                 urls.append(discInfo['id'])
         parameters = { 'title_refs': ','.join(urls) }
         
-        info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
+        info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ), 'latin-1' )
         
         ret = {}
         for title in info['ratings']['ratings_item']:
@@ -167,7 +167,7 @@ class NetflixUser:
             requestUrl = '/users/%s/rental_history/%s' % (accessToken.key,historyType)
         
         try:
-            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ), 'latin-1' )
         except:
             return {}
             
@@ -196,7 +196,7 @@ class NetflixUser:
             requestUrl = '/users/%s/rental_history/%s' % (accessToken.key,historyType)
         
         try:
-            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ), 'latin-1' )
         except:
             return {}
             
@@ -216,7 +216,7 @@ class NetflixUser:
                 parameters['country'] = "ca"
         print "params: " + str(parameters)    
         parameters['v'] = str('2.0')
-        parameters['filters'] = 'http://api.netflix.com/categories/title_formats/instant'
+        parameters['filters'] = 'http://api-public.netflix.com/categories/title_formats/instant'
         parameters['expand'] = '@title,@synopsis,@directors,@formats,@episodes,@short_synopsis'
         parameters['output'] = 'json'
         
@@ -229,7 +229,7 @@ class NetflixUser:
             requestUrl = '/users/%s/queues/instant/%s' % (accessToken.key,historyType)
         
         try:
-            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ), 'latin-1' )
         except:
             return {}
             
@@ -249,7 +249,7 @@ class NetflixUser:
                 parameters['country'] = "ca"
             
         parameters['v'] = str('2.0')
-        #parameters['filters'] = 'http://api.netflix.com/categories/title_formats/disc'
+        #parameters['filters'] = 'http://api-public.netflix.com/categories/title_formats/disc'
         parameters['expand'] = '@title,@synopsis,@directors,@formats,@episodes,@short_synopsis'
         parameters['output'] = 'json'
         
@@ -262,7 +262,7 @@ class NetflixUser:
             requestUrl = '/users/%s/queues/disc/available/%s' % (accessToken.key,historyType)
         
         try:
-            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ), 'latin-1' )
         except:
             return {}
             
@@ -279,7 +279,7 @@ class NetflixUser:
             parameters['updated_min'] = updatedMin
 
         parameters['v'] = str('2.0')
-        parameters['filters'] = 'http://api.netflix.com/categories/title_formats/instant'
+        parameters['filters'] = 'http://api-public.netflix.com/categories/title_formats/instant'
         parameters['expand'] = '@title,@synopsis,@directors,@formats,@episodes,@short_synopsis'
         parameters['output'] = 'json'
         
@@ -294,7 +294,7 @@ class NetflixUser:
         #    requestUrl = '/users/%s/queues/instant/available/%s' % (accessToken.key,historyType)
         
         try:
-            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ), 'latin-1' )
         except:
             return {}
             
@@ -314,7 +314,7 @@ class NetflixUser:
                 parameters['country'] = "ca"
             
         parameters['v'] = str('2.0')
-        parameters['filters'] = 'http://api.netflix.com/categories/title_formats/instant'
+        parameters['filters'] = 'http://api-public.netflix.com/categories/title_formats/instant'
         parameters['expand'] = '@title,@cast,@synopsis,@directors,@formats,@episodes,@short_synopsis'
         parameters['output'] = 'json'
 
@@ -324,13 +324,13 @@ class NetflixUser:
         requestUrl = '/users/%s/recommendations' % (accessToken.key)
         
         try:
-            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ), 'latin-1' )
         except:
             return {}
         return info
 
 
-    #http://api.netflix.com/catalog/titles/series/60030529/seasons/60030679/episodes
+    #http://api-public.netflix.com/catalog/titles/series/60030529/seasons/60030679/episodes
     def getInstantQueueTvShowEpisodes(self, seriesId, seasonId):
         parameters = {}
         parameters['max_results'] = str('500')
@@ -343,7 +343,7 @@ class NetflixUser:
         requestUrl = '/catalog/titles/series/' + str(seriesId) + '/seasons/' + str(seasonId) + "/episodes"
       
         try:
-            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ), 'latin-1' )
         except:
             return {}
             
@@ -356,7 +356,7 @@ class NetflixUser:
             parameters['max_results'] = maxResults
 
         parameters['v'] = str('2.0')
-        parameters['filters'] = 'http://api.netflix.com/categories/title_formats/instant'
+        parameters['filters'] = 'http://api-public.netflix.com/categories/title_formats/instant'
 
         if not isinstance(accessToken, oauth.OAuthToken):
             accessToken = oauth.OAuthToken(accessToken['key'], accessToken['secret'] )
@@ -364,7 +364,7 @@ class NetflixUser:
         requestUrl = '/catalog/titles/movies/' + str(ID) + '/similars'
         print requestUrl
         try:
-            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ), 'latin-1' )
         except:
             return {}
             
@@ -388,20 +388,20 @@ class NetflixUser:
                 parameters['country'] = "ca"
             
         parameters['v'] = str('2.0')
-        parameters['filters'] = 'http://api.netflix.com/categories/title_formats/' + queue
+        parameters['filters'] = 'http://api-public.netflix.com/categories/title_formats/' + queue
         parameters['expand'] = '@title,@synopsis,@directors,@formats,@episodes,@short_synopsis'
         parameters['output'] = 'json'
         if not isinstance(accessToken, oauth.OAuthToken):
             accessToken = oauth.OAuthToken(accessToken['key'], accessToken['secret'] )
-        info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ))
+        info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ), 'latin-1')
         if re.search(r"Invalid Series", str(info), re.DOTALL | re.IGNORECASE | re.MULTILINE):
             #reset url to programs
             requestUrl = '/catalog/titles/programs/'+curTID
-            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ))
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ), 'latin-1')
         if re.search(r"Resource Not Found", str(info), re.DOTALL | re.IGNORECASE | re.MULTILINE):
             #reset url to movies
             requestUrl = '/catalog/titles/movies/'+curTID
-            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ))
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ), 'latin-1')
         return info
 
     def searchTitles(self, term, queue, startIndex=None,maxResults=None,caUser=None):
@@ -417,12 +417,12 @@ class NetflixUser:
                 parameters['country'] = "ca"
             
         parameters['v'] = str('2.0')
-        parameters['filters'] = 'http://api.netflix.com/categories/title_formats/' + queue
+        parameters['filters'] = 'http://api-public.netflix.com/categories/title_formats/' + queue
         parameters['expand'] = '@title,@synopsis,@directors,@formats,@episodes,@short_synopsis'
         parameters['output'] = 'json'
         if not isinstance(accessToken, oauth.OAuthToken):
             accessToken = oauth.OAuthToken(accessToken['key'], accessToken['secret'] )
-        info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ))
+        info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ), 'latin-1')
         return info
 
     def modifyQueue(self, ID, method):
@@ -431,7 +431,7 @@ class NetflixUser:
         #to add, use Post, to remove use Delete
         parameters['method'] = method
         if (method == "post"):
-            parameters['title_ref'] = 'http://api.netflix.com/catalog/titles/movies/' + str(ID)
+            parameters['title_ref'] = 'http://api-public.netflix.com/catalog/titles/movies/' + str(ID)
         if not isinstance(accessToken, oauth.OAuthToken):
             accessToken = oauth.OAuthToken(accessToken['key'], accessToken['secret'] )
 
@@ -440,7 +440,7 @@ class NetflixUser:
         else:
             requestUrl = '/users/'+ accessToken.key + '/queues/instant/available/' + str(ID) 
         try:
-            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ), 'latin-1' )
         except:
             return {}
             
@@ -454,7 +454,7 @@ class NetflixUser:
         if(position):
             parameters['position'] = str(position)
         if (method == "post"):
-            parameters['title_ref'] = 'http://api.netflix.com/catalog/titles/movies/' + str(ID)
+            parameters['title_ref'] = 'http://api-public.netflix.com/catalog/titles/movies/' + str(ID)
         if not isinstance(accessToken, oauth.OAuthToken):
             accessToken = oauth.OAuthToken(accessToken['key'], accessToken['secret'] )
 
@@ -464,7 +464,7 @@ class NetflixUser:
             requestUrl = '/users/'+ accessToken.key + '/queues/disc/available/' + str(ID) 
         print "------- REQUESTED URL IS: " + requestUrl
         try:
-            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ), 'latin-1' )
         except:
             return {}
             
@@ -485,7 +485,7 @@ class NetflixCatalog:
             parameters['max_results'] = maxResults
         info = simplejson.loads( self.client._getResource( 
                                     requestUrl,
-                                    parameters=parameters))
+                                    parameters=parameters), 'latin-1')
 
         return info['catalog_titles']['catalog_title']
 
@@ -499,13 +499,13 @@ class NetflixCatalog:
 
         info = simplejson.loads( self.client._getResource( 
                                     requestUrl,
-                                    parameters=parameters))
+                                    parameters=parameters), 'latin-1')
         print simplejson.dumps(info)
         return info['autocomplete']['autocomplete_item']
     
     def getTitle(self, url):
         requestUrl = url
-        info = simplejson.loads( self.client._getResource( requestUrl ))
+        info = simplejson.loads( self.client._getResource( requestUrl ), 'latin-1')
         return info
 
     def searchPeople(self, term,startIndex=None,maxResults=None):
@@ -519,7 +519,7 @@ class NetflixCatalog:
         try:
             info = simplejson.loads( self.client._getResource( 
                                     requestUrl,
-                                    parameters=parameters))
+                                    parameters=parameters), 'latin-1')
         except:
             return []
 
@@ -528,7 +528,7 @@ class NetflixCatalog:
     def getPerson(self,url):
         requestUrl = url
         try:
-            info = simplejson.loads( self.client._getResource( requestUrl ))
+            info = simplejson.loads( self.client._getResource( requestUrl ), 'latin-1')
         except:
             return {}
         return info       
@@ -558,7 +558,7 @@ class NetflixUserQueue:
             info = simplejson.loads(self.client._getResource( 
                                     requestUrl,
                                     parameters=parameters,
-                                    token=self.user.accessToken ))
+                                    token=self.user.accessToken ), 'latin-1')
         except:
             return []
         else:
@@ -584,7 +584,7 @@ class NetflixUserQueue:
             info = simplejson.loads(self.client._getResource( 
                                     requestUrl,
                                     parameters=parameters,
-                                    token=self.user.accessToken ))
+                                    token=self.user.accessToken ), 'latin-1')
         except:
             return []
         else:
@@ -610,7 +610,7 @@ class NetflixUserQueue:
             info = simplejson.loads(self.client._getResource( 
                                     requestUrl,
                                     parameters=parameters,
-                                    token=self.user.accessToken ))
+                                    token=self.user.accessToken ), 'latin-1')
         except:
             return []
         else:
@@ -637,7 +637,7 @@ class NetflixUserQueue:
             response = self.client._getResource( 
                                     requestUrl, 
                                     token=accessToken )
-            response = simplejson.loads(response)
+            response = simplejson.loads(response, 'latin-1')
             self.tag = response["queue"]["etag"]
         parameters['etag'] = self.tag
         response = self.client._postResource( 
@@ -663,7 +663,7 @@ class NetflixUserQueue:
                                     token=accessToken,
                                     parameters=queueparams )
         print "Response is " + response
-        response = simplejson.loads(response)
+        response = simplejson.loads(response, 'latin-1')
         titles = response["queue"]["queue_item"]
         
         for disc in titles:
@@ -703,7 +703,7 @@ class NetflixDisc:
             sys.exit(1)
         try:
             print "==============  the url request is going to" + url
-            info = simplejson.loads(self.client._getResource( url ))
+            info = simplejson.loads(self.client._getResource( url ), 'latin-1')
         except:
             return []
         else:
