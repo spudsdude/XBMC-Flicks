@@ -285,7 +285,7 @@ def writeDiscLinkFile(id, title, webURL):
         f.close()
 
 def checkFormat(netflix, curX):
-    strLinkUrl = "http://api.netflix.com/catalog/titles/movies/" + curX.ID
+    strLinkUrl = "http://api-public.netflix.com/catalog/titles/movies/" + curX.ID
     try:
         movie = netflix.catalog.getTitle(strLinkUrl)
         disc = NetflixDisc(movie['catalog_title'],netflix)
@@ -307,7 +307,7 @@ def getSummary(netflix, curX):
     strCastClean = ""
     strSynopsisCleaned = ""
     strDirectorsCleaned = ""
-    strLinkUrl = "http://api.netflix.com/catalog/titles/movies/" + curX.ID
+    strLinkUrl = "http://api-public.netflix.com/catalog/titles/movies/" + curX.ID
     #try to get movie from catalog
     movie = None
     disc = None
@@ -704,7 +704,7 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
     #print "got id of : " + curX.ID
     #show info
     curX.TvShowSeriesID = curX.ID
-    matchShowData = re.search(r"http://api.netflix.*?/catalog/titles/series/(\d*)/seasons/(\d*)", curQueueItem, re.DOTALL | re.IGNORECASE | re.MULTILINE)
+    matchShowData = re.search(r"http://api-public.netflix.*?/catalog/titles/series/(\d*)/seasons/(\d*)", curQueueItem, re.DOTALL | re.IGNORECASE | re.MULTILINE)
     if (matchShowData):
         curX.TvShow = True
         curX.TvShowSeriesID = matchShowData.group(1).strip()
@@ -911,7 +911,7 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
         #curXe.TvEpisodeEpisodeNum = matchAllEpisodes.group("eNum")
         #curXe.TvEpisodeEpisodeSeasonNum = matchAllEpisodes.group("title")
 
-        matchAllEpisodesRealID = re.search(r"http://api.netflix.com/catalog/titles/programs/\d{1,15}/(?P<id>\d{1,15})", curXe.TvEpisodeNetflixID, re.DOTALL | re.MULTILINE)
+        matchAllEpisodesRealID = re.search(r"http://api-public.netflix.com/catalog/titles/programs/\d{1,15}/(?P<id>\d{1,15})", curXe.TvEpisodeNetflixID, re.DOTALL | re.MULTILINE)
         if matchAllEpisodesRealID:
             curXe.ID = matchAllEpisodesRealID.group("id").strip()
             curXe.TitleShortLink = curXe.ID
@@ -982,11 +982,13 @@ def getUserAtHomeItems(netflix,user):
 
 
 def getUserInstantQueue(netflix,user, displayWhat):
+    print "[RFB]getUserInstantQueue(netflix,user, displayWhat)"
     print "*** What's in the Instant Queue? ***"
     #get user setting for max number to download
     feeds = netflix.user.getInstantQueue(None,None,MAX_INSTANTQUEUE_RETREVE,None,IN_CANADA)
     print "Max value: " + str(MAX_INSTANTQUEUE_RETREVE)
     print "In CA: " + str(IN_CANADA)
+    print "VERBOSE_USER_LOG: " + str(VERBOSE_USER_LOG)
     if (VERBOSE_USER_LOG):
         print feeds
     
@@ -1012,7 +1014,7 @@ def getUserInstantQueue(netflix,user, displayWhat):
 ##            print curX.TvShowSeriesID
 ##            curX.TvShowSeasonID = matchIsTvShow.group(3).strip()
 ##            print curX.TvShowSeasonID
-##            curX.TvShowLink = 'http://api.netflix.com/catalog/titles/series/'+ str(curX.TvShowSeriesID) + '/seasons/' + str(curX.TvShowSeasonID)
+##            curX.TvShowLink = 'http://api-public.netflix.com/catalog/titles/series/'+ str(curX.TvShowSeriesID) + '/seasons/' + str(curX.TvShowSeasonID)
 ##            print curX.TvShowLink
 ##            if(AUTO_EXPAND_EPISODES):
 ##                epfeeds = netflix.user.getInstantQueueTvShowEpisodes(curX.TvShowSeriesID, curX.TvShowSeasonID)
@@ -1375,6 +1377,7 @@ def initApp():
         exit
 
 def getInstantQueue(displayWhat=None):
+    print "[RFB]getInstantQueue(displayWhat)"
     initApp()
     getUserInstantQueue(netflixClient,user, displayWhat)
     if(not user):
