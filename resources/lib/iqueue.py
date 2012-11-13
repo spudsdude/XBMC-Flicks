@@ -817,7 +817,8 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
                 else:
                     curX.IsInstantAvailable = True
             else:
-                return curX
+				curX.IsInstantAvailable = True
+				#return curX
 
     if(not curX.TvShow):
         ciName = str(curX.TitleShortLink + '.html')
@@ -911,7 +912,7 @@ def getMovieDataFromFeed(curX, curQueueItem, bIsEpisode, netflix, instantAvail, 
         #curXe.TvEpisodeEpisodeNum = matchAllEpisodes.group("eNum")
         #curXe.TvEpisodeEpisodeSeasonNum = matchAllEpisodes.group("title")
 
-        matchAllEpisodesRealID = re.search(r"http://api.netflix.com/catalog/titles/programs/\d{1,15}/(?P<id>\d{1,15})", curXe.TvEpisodeNetflixID, re.DOTALL | re.MULTILINE)
+        matchAllEpisodesRealID = re.search(r"http://api-public.netflix.com/catalog/titles/programs/\d{1,15}/(?P<id>\d{1,15})", curXe.TvEpisodeNetflixID, re.DOTALL | re.MULTILINE)
         if matchAllEpisodesRealID:
             curXe.ID = matchAllEpisodesRealID.group("id").strip()
             curXe.TitleShortLink = curXe.ID
