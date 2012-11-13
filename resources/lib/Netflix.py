@@ -13,7 +13,7 @@ from xml.dom.minidom import parseString
 import simplejson
 from urlparse import urlparse
 
-HOST              = 'api-public.netflix.com'
+HOST              = 'api.netflix.com'
 PORT              = '80'
 REQUEST_TOKEN_URL = 'http://api.netflix.com/oauth/request_token'
 ACCESS_TOKEN_URL  = 'http://api.netflix.com/oauth/access_token'
@@ -203,7 +203,6 @@ class NetflixUser:
         return info
 
     def getInstantQueue(self,historyType=None,startIndex=None,maxResults=None,updatedMin=None,caUser=None):
-        print "[RFB]NetflixUser.getInstantQueue(self,historyType,startIndex,maxResults,updatedMin,caUser)"
         accessToken=self.accessToken
         parameters = {}
         if startIndex:
@@ -217,7 +216,7 @@ class NetflixUser:
                 parameters['country'] = "ca"
         print "params: " + str(parameters)    
         parameters['v'] = str('2.0')
-        parameters['filters'] = 'http://api-public.netflix.com/categories/title_formats/instant'
+        parameters['filters'] = 'http://api.netflix.com/categories/title_formats/instant'
         parameters['expand'] = '@title,@synopsis,@directors,@formats,@episodes,@short_synopsis'
         parameters['output'] = 'json'
         
@@ -230,27 +229,8 @@ class NetflixUser:
             requestUrl = '/users/%s/queues/instant/%s' % (accessToken.key,historyType)
         
         try:
-            #print "[RFB]Calling self.client._getResource()..."
-            #print "[RFB]" + repr(self.client._getResource(requestUrl, parameters=parameters, token=accessToken )) + "[RFB]"
-            print "[RFB]Calling simplejson.loads()..."
-            info = simplejson.loads(self.client._getResource(requestUrl, parameters=parameters, token=accessToken)
-                                   .replace('\xa1','')
-                                   .replace('\xe0','')
-                                   .replace('\xe1','')
-                                   .replace('\xe5','')
-                                   .replace('\xe7','')
-                                   .replace('\xe8','')
-                                   .replace('\xe9','')
-                                   .replace('\xed','')
-                                   .replace('\xf1','')
-                                   .replace('\xf3','')
-                                   .replace('\xf4','')
-                                   .replace('\xfb','')
-                                   .replace('\xfc',''))
-            #info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ))
+            info = simplejson.loads( self.client._getResource(requestUrl, parameters=parameters, token=accessToken ) )
         except:
-            print "[RFB]Exception..."
-            print "[RFB]" + repr(self.client._getResource(requestUrl, parameters=parameters, token=accessToken )) + "[RFB]"
             return {}
             
         return info
